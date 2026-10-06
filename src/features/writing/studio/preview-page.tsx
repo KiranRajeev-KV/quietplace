@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, getRouteApi, useNavigate } from '@tanstack/react-router';
-import { manuscriptQuery, invalidateWriting } from '../data/queries';
+import { manuscriptQuery, invalidateWriting, writingKeys } from '../data/queries';
 import { writingRepository } from '../data/repository';
 import { toManuscript, readingStats, excerpt, type Publication } from '../domain/model';
 import { ArticleView } from '../public/article-view';
@@ -14,6 +14,7 @@ export function PreviewPage() {
     mutationFn: () => writingRepository.action(id, query.data!.revision, 'publish'),
     onSuccess: async (piece) => {
       if ('deleted' in piece) return;
+      client.setQueryData(writingKeys.manuscript(id), piece);
       await invalidateWriting(client);
       await navigate({ to: '/writing/$slug', params: { slug: piece.slug } });
     },

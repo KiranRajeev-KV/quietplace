@@ -114,6 +114,49 @@ test('native transitions run, finish, and disappear under reduced motion', async
     ),
   ).toBe(0);
 });
+test('background navigation and skipped native snapshots preserve navigation without errors', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.addInitScript(() => {
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () =>
+        document.documentElement.dataset.testBackground === 'true' ? 'hidden' : 'visible',
+    });
+    const native = document.startViewTransition.bind(document);
+    document.startViewTransition = (...args) => {
+      const transition = native(...args);
+      document.documentElement.dataset.testTransitionCount = String(
+        Number(document.documentElement.dataset.testTransitionCount ?? 0) + 1,
+      );
+      // A tab can become hidden after the Router's visibility check. Exercise
+      // the resulting native rejection rather than a fake successful promise.
+      if (document.documentElement.dataset.testSkipSnapshot === 'true') transition.skipTransition();
+      return transition;
+    };
+  });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+  await page.evaluate(() => {
+    document.documentElement.dataset.testTransitionCount = '0';
+    document.documentElement.dataset.testBackground = 'true';
+  });
+  await page.getByRole('link', { name: 'Work 01', exact: true }).click();
+  await expect(page).toHaveURL(/\/projects$/);
+  await expect(page.locator('main h1')).toContainText('A few things,');
+  await expect(page.locator('html')).toHaveAttribute('data-test-transition-count', '0');
+  await page.evaluate(() => {
+    document.documentElement.dataset.testBackground = 'false';
+    document.documentElement.dataset.testSkipSnapshot = 'true';
+  });
+  await page.getByRole('link', { name: 'About 03', exact: true }).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.locator('main h1')).toContainText('An engineer’s mind.');
+  await expect(page.locator('html')).toHaveAttribute('data-test-transition-count', '1');
+  expect(errors).toEqual([]);
+});
 test('every internal href resolves and raw route documents have correct social metadata', async ({
   page,
   request,

@@ -629,12 +629,23 @@ test('Studio, preview and publication transitions capture one coherent route she
   await expect(page.getByText('PRIVATE PREVIEW', { exact: true }).first()).toBeVisible();
   await page.getByRole('link', { name: '← Return to writing', exact: true }).click();
   await saved(page);
+  await expect(page.locator('.desk-page-end')).toContainText('PUBLISHED');
+  await page.getByRole('button', { name: 'Archive', exact: true }).click();
+  await page.getByRole('button', { name: 'Move to archive', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Thoughts,');
+  await page.getByRole('button', { name: 'Archive', exact: true }).click();
+  await page.getByRole('link', { name: /QA — A temporary publication/ }).click();
+  await page.getByRole('button', { name: 'Restore manuscript ↗', exact: true }).click();
+  await saved(page);
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.getByRole('button', { name: 'Delete permanently', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Thoughts,');
   await expect
     .poll(() =>
       page.evaluate(() => {
         const audits = (window as typeof window & { transitionAudits: { ready: string }[] })
           .transitionAudits;
-        return audits.length >= 6 && audits.every((audit) => audit.ready !== 'pending');
+        return audits.length >= 9 && audits.every((audit) => audit.ready !== 'pending');
       }),
     )
     .toBe(true);

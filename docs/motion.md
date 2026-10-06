@@ -29,6 +29,8 @@ The shell follows TanStack's presented match lane, rather than the requested URL
 
 Reduced motion prevents View Transition API calls, disables CSS animation/transitions and smooth scrolling, and stops active Canvas interpolation. Route changes focus the main landmark without scrolling it; the initial document preserves the skip link as the first keyboard target. A live region announces the route.
 
+Background documents skip native snapshots. A small browser-side guard handles the native `ready` promise when the browser aborts or cannot capture a snapshot; the Router still awaits the DOM update, and unexpected update errors remain visible. This follows [Chrome’s enhancement guidance](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#transitions-as-an-enhancement) and covers the [Router’s currently unhandled native promise](https://github.com/TanStack/router/discussions/7733), without replacing its navigation lifecycle.
+
 Canvas draws on resize/pointer activity and settles rather than running an idle loop. Project effects use transforms, opacity, and native snapshots. Shared artwork is composited by the browser. The quality suite verifies that native transitions finish, history restoration works, and reduced-motion navigation creates no transition.
 
 ## References and extracted principles
