@@ -4,6 +4,7 @@ import {
   Outlet,
   Link,
   useRouterState,
+  useMatches,
 } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import { Header } from '@/components/header';
@@ -27,7 +28,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 function RootLayout() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const studio = pathname.includes('/studio');
+  // Location changes before a lazy destination is presented. The shell and the
+  // Outlet must follow the same displayed match lane during snapshot capture.
+  const studio = useMatches({
+    select: (matches) => matches.some((match) => match.routeId === '/studio'),
+  });
   return (
     <>
       <HeadContent />
@@ -42,7 +47,7 @@ function RootLayout() {
         Skip to content
       </Link>
       {!studio && <Header />}
-      <div className="route-stage" key={pathname}>
+      <div className="route-stage">
         <main id="main" tabIndex={-1}>
           <Outlet />
         </main>

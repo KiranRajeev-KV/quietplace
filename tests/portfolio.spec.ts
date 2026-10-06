@@ -194,6 +194,7 @@ test('internal destinations, assets, metadata, and deliberate 404 are valid', as
     expect((await request.get(href.split('#')[0] || '/')).status()).toBe(200);
   for (const path of [
     '/favicon.svg',
+    '/favicon.ico',
     '/apple-touch-icon.png',
     '/og.png',
     '/robots.txt',

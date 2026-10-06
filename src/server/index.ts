@@ -220,6 +220,8 @@ export default {
           : original.pathname;
     const routed = new URL(request.url);
     routed.pathname = path;
+    if (path === '/favicon.ico')
+      return Response.redirect(new URL(`${base}favicon.svg`, request.url).href, 301);
     if (path.startsWith('/api/') || path.startsWith('/media/'))
       return app.fetch(new Request(routed, request), env, context);
     if (

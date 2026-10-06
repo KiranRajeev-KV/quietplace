@@ -579,3 +579,76 @@ test('keyboard formatting, deliberate internal links and fenced code use Plate i
   await page.getByRole('link', { name: 'A connection', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Thinking,');
 });
+test('Studio, preview and publication transitions capture one coherent route shell', async ({
+  page,
+  request,
+}) => {
+  await signIn(request);
+  const piece = await create(request);
+  await page.addInitScript(() => {
+    const audits: { ready: string; before: string[]; after: string[] }[] = [];
+    (window as typeof window & { transitionAudits: typeof audits }).transitionAudits = audits;
+    const native = document.startViewTransition.bind(document);
+    const names = () =>
+      Array.from(document.querySelectorAll('*'))
+        // React can retain a hidden Suspense tree. Native snapshots only
+        // include elements that participate in the rendered layout.
+        .filter((element) => element.getClientRects().length > 0)
+        .map((element) => getComputedStyle(element).viewTransitionName)
+        .filter((name) => name && name !== 'none');
+    document.startViewTransition = (options) => {
+      const audit = { ready: 'pending', before: names(), after: [] as string[] };
+      audits.push(audit);
+      const transition = native(options);
+      void transition.ready.then(
+        () => {
+          audit.ready = 'ready';
+          // Capture completes after the framework's update callback resolves.
+          // Inspect the presented frame, rather than an intermediate commit.
+          audit.after = names();
+        },
+        (error: Error) => {
+          audit.ready = error.message;
+        },
+      );
+      return transition;
+    };
+  });
+  await page.goto(`/studio/${piece.id}`);
+  await saved(page);
+  await page.getByRole('button', { name: 'Preview ↗', exact: true }).click();
+  await expect(page.locator('.publication h1')).toHaveText(piece.title);
+  await page.getByRole('button', { name: 'Publish this edition ↗', exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/writing/${piece.slug}$`));
+  await expect(page.locator('.site-header')).toBeVisible();
+  await page.getByRole('link', { name: '← All writing', exact: true }).click();
+  await expect(page.locator('.writing-intro')).toBeVisible();
+  await page.goBack();
+  await expect(page.locator('.publication h1')).toHaveText(piece.title);
+  await page.goBack();
+  await expect(page.getByText('PRIVATE PREVIEW', { exact: true }).first()).toBeVisible();
+  await page.getByRole('link', { name: '← Return to writing', exact: true }).click();
+  await saved(page);
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const audits = (window as typeof window & { transitionAudits: { ready: string }[] })
+          .transitionAudits;
+        return audits.length >= 6 && audits.every((audit) => audit.ready !== 'pending');
+      }),
+    )
+    .toBe(true);
+  const audits = await page.evaluate(
+    () =>
+      (
+        window as typeof window & {
+          transitionAudits: { ready: string; before: string[]; after: string[] }[];
+        }
+      ).transitionAudits,
+  );
+  expect(audits).toEqual(audits.map((audit) => ({ ...audit, ready: 'ready' })));
+  for (const audit of audits) {
+    expect(new Set(audit.before).size).toBe(audit.before.length);
+    expect(new Set(audit.after).size).toBe(audit.after.length);
+  }
+});

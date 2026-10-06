@@ -23,6 +23,8 @@ Loading states are limited to genuine lazy-loading waits and use a thin ink line
 
 Writing titles keep a stable identity between the archive and article. `writing-open`, `writing-close` and `writing-turn` extend the same sheet vocabulary; `manuscript-preview` and `manuscript-return` connect the writing desk to its final typesetting. Reading paragraphs remain still. Only navigation, contextual controls and genuine save/loading states move.
 
+The shell follows TanStack's presented match lane, rather than the requested URL. During a lazy Studio/public navigation, this prevents both headers from entering the same snapshot. The route stage stays mounted so requesting another page cannot remount the current manuscript before the destination commits.
+
 ## Accessibility and performance
 
 Reduced motion prevents View Transition API calls, disables CSS animation/transitions and smooth scrolling, and stops active Canvas interpolation. Route changes focus the main landmark without scrolling it; the initial document preserves the skip link as the first keyboard target. A live region announces the route.

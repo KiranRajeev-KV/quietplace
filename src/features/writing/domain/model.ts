@@ -154,10 +154,12 @@ export function readingStats(content: Value) {
   return { wordCount, readingMinutes: Math.max(1, Math.ceil(wordCount / 220)) };
 }
 export function excerpt(manuscript: Manuscript) {
-  return (
-    manuscript.description.trim() ||
-    plainText(manuscript.content).replace(/\s+/g, ' ').trim().slice(0, 180)
-  );
+  if (manuscript.description.trim()) return manuscript.description.trim();
+  const text = plainText(manuscript.content).replace(/\s+/g, ' ').trim();
+  if (text.length <= 180) return text;
+  const start = text.slice(0, 180),
+    boundary = start.lastIndexOf(' ');
+  return `${(boundary > 0 ? start.slice(0, boundary) : start).replace(/[.,;:]$/, '')}…`;
 }
 export function mediaIds(manuscript: Manuscript) {
   const ids = new Set<string>();

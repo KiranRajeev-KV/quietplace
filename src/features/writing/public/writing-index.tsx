@@ -41,7 +41,7 @@ export function WritingIndex() {
                 {year !== previousYear && <h2 className="writing-year micro">{year}</h2>}
                 <article className="writing-entry">
                   <time className="micro" dateTime={piece.publishedAt}>
-                    {formatDate(piece.publishedAt).replace(` ${year}`, '')}
+                    {formatDate(piece.publishedAt, false)}
                   </time>
                   <Link
                     to="/writing/$slug"
