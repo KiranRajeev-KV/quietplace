@@ -19,7 +19,9 @@ TanStack's `defaultViewTransition` starts native same-document transitions. It c
 
 The persistent header has its own transition name. The page sheet exits quickly and arrives more slowly. CSS handles all movement; no animation package is required. Unsupported browsers receive a small CSS entrance and fully working navigation. No animation is used to delay route commitment or to intercept wheel/touch scrolling.
 
-Loading states are limited to genuine lazy-loading waits and use a thin ink line. The site keeps its three navigation links visible at narrow widths; a hamburger menu would add friction to this small information architecture.
+Loading states are limited to genuine lazy-loading waits and use a thin ink line. The site keeps its four navigation links visible at narrow widths; a hamburger menu would add friction to this small information architecture.
+
+Writing titles keep a stable identity between the archive and article. `writing-open`, `writing-close` and `writing-turn` extend the same sheet vocabulary; `manuscript-preview` and `manuscript-return` connect the writing desk to its final typesetting. Reading paragraphs remain still. Only navigation, contextual controls and genuine save/loading states move.
 
 ## Accessibility and performance
 

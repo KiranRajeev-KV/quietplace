@@ -92,7 +92,10 @@ export async function publicDocument(request: Request, env: Env, path: string): 
   );
   // React hoists metadata into the string preamble. The Worker owns the actual
   // document head; the same route components own the visible page.
-  body = body.replace(/<title>.*?<\/title>|<meta\b[^>]*>|<link\b[^>]*>/gs, '');
+  body = body.replace(
+    /<title>.*?<\/title>|<meta\b[^>]*>|<link\b[^>]*>|<script\b[^>]*type="application\/ld\+json"[^>]*>.*?<\/script>/gs,
+    '',
+  );
   const templateURL = new URL('/', request.url),
     template = await env.ASSETS.fetch(new Request(templateURL, request));
   let html = await template.text();

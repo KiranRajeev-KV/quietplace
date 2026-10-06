@@ -216,7 +216,7 @@ test('public documents, metadata, RSS and sitemap contain only committed publica
   expect(response.status()).toBe(200);
   expect(html).toContain('<article');
   expect(html).toContain('Development verification only.');
-  expect(html).toContain('application/ld+json');
+  expect(html.match(/application\/ld\+json/g)).toHaveLength(1);
   expect(html).toContain('og:type" content="article');
   expect(html).not.toContain('PRIVATE DEVELOPMENT SPECIMEN');
   const feed = await request.get('/writing/feed.xml');
@@ -559,10 +559,12 @@ test('keyboard formatting, deliberate internal links and fenced code use Plate i
   await page.getByLabel('LINK ADDRESS').fill('/writing');
   await page.getByRole('button', { name: 'Connect ↗' }).click();
   await expect(body.locator('a[href="/writing"]')).toHaveText('A connection');
+  await saved(page);
   await body.press('ControlOrMeta+End');
   await expect(page.getByRole('toolbar', { name: 'Text formatting' })).toHaveCount(0);
   await page.keyboard.press('Enter');
   await expect(body.locator('p')).toHaveCount(2);
+  await expect(body.locator('p').last()).toHaveText('');
   await body.locator('p').last().click();
   await body.pressSequentially('```');
   await expect(body.locator('.editor-code')).toHaveCount(1);

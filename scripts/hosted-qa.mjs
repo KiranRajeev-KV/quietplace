@@ -14,7 +14,13 @@ const input = await new Promise((resolve) => {
 });
 const { url, token } = input;
 if (!url || !token) throw new Error('Provide the existing Site URL and owner access token.');
-const args = ['exec', 'playwright', 'test', '--reporter=list'];
+const args = [
+  'exec',
+  'playwright',
+  'test',
+  ...(input.files ?? ['tests/portfolio.spec.ts', 'tests/routing.spec.ts', 'tests/hosted.spec.ts']),
+  '--reporter=list',
+];
 const child = spawn('pnpm', args, {
   env: { ...process.env, TEST_URL: url, SITES_TEST_AUTH: token },
   stdio: ['ignore', 'pipe', 'pipe'],

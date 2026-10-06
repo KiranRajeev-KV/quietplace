@@ -19,6 +19,10 @@ Cloudflare's maintained Vite plugin builds `dist/client` and `dist/server`. Site
 
 The Worker renders Writing with the actual Router shell, static Plate renderer and article components. It seeds public Query data into escaped JSON. The browser waits for its lazy route before committing the identical geometry; it does not claim experimental hydration support. Article HTML, metadata and readable content are available without JavaScript. Missing/draft articles return HTTP 404. Known portfolio route metadata remains prebuilt; interactive portfolio content remains client-rendered. Dynamic RSS and sitemap only use published editions.
 
+Sites dispatch serves matching static assets before invoking the Worker. Consequently, robots and sitemap have no static copies: both belong exclusively to the Worker so new publications appear immediately and Studio stays excluded.
+
+The hosted ASSETS binding also does not inherit Wrangler's SPA fallback. The Worker explicitly serves the app shell for missing HTML history routes, allowing legacy redirects and the Router's 404 to run. Missing asset requests retain their 404; known portfolio routes keep their prebuilt heads.
+
 `VITE_BASE_PATH` controls Vite, Router, links and assets. The Vite plugin configures matching Worker `BASE_PATH`; Sites runtime configuration must agree. A separate production test verifies `/portfolio/` without modifying the main artifact. Asset fallback preserves nested route refreshes.
 
 ## Authentication and safety

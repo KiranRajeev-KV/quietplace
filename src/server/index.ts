@@ -237,6 +237,20 @@ export default {
       return new Response(response.body, { status: response.status, headers });
     }
     // Asset keys are rooted in dist/client, independent of the URL prefix.
-    return env.ASSETS.fetch(new Request(routed, request));
+    const asset = await env.ASSETS.fetch(new Request(routed, request));
+    if (
+      asset.status === 404 &&
+      request.method === 'GET' &&
+      request.headers.get('accept')?.includes('text/html')
+    ) {
+      // Sites' ASSETS binding does not inherit Wrangler's SPA fallback. Serve
+      // the application shell explicitly for history routes, including legacy
+      // redirects and the Router's accessible 404. Missing files stay 404.
+      const shell = await env.ASSETS.fetch(new Request(new URL('/', request.url), request));
+      const headers = new Headers(shell.headers);
+      headers.set('X-Robots-Tag', 'noindex, follow');
+      return new Response(shell.body, { status: 404, headers });
+    }
+    return asset;
   },
 };

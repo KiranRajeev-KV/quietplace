@@ -6,7 +6,7 @@ The quality gate runs against the Vite production artifact, with the same suite 
 
 - Strict TypeScript, including unchecked indexing and unused declarations.
 - Oxlint with zero warnings, Oxfmt, and Knip with no ignored dependencies.
-- A Vite build plus generated route/social documents, manifest, sitemap, and robots.
+- A Vite client/Worker build, generated portfolio route heads and manifest, and live Writing discovery documents.
 - Responsive home checks at 1920, 1366, 768, 390, and 320 CSS pixels.
 - Narrow case-study, project listing, about, and colophon geometry and WCAG AA checks.
 - Keyboard skip navigation and visible focus.
@@ -25,11 +25,11 @@ Personally inspected the complete home experience, case studies, page endings, l
 
 Before migration, the existing deployment returned HTTP 404 for `/projects` and `/about`, and 200 for `/work/thread`. The replacement declares both missing routes and uses Sites' supported static SPA fallback. Known routes have static HTML metadata documents; history matching belongs to TanStack Router.
 
-Private access is preserved. Standard visits require ChatGPT sign-in. Unknown SPA paths may return HTTP 200 while displaying the noindex 404, which is a static-host limitation rather than a client-router status code.
+Private access is preserved. Standard visits require ChatGPT sign-in. The Writing pass adds explicit Worker fallback for missing HTML history routes; hosted unknown documents now retain HTTP 404 while displaying the Router's noindex page.
 
-## Performance boundaries
+## Earlier portfolio performance audit
 
-The application uses automatic route splitting and lazy demo chunks, self-hosted font preloads, a small WebP texture, and original optimized imagery. The main runtime bundle is approximately 94 kB gzip; route and demo chunks are small. Canvas has no idle loop, caps resolution at 2×, and cancels on reduced-motion changes.
+The earlier portfolio uses automatic route splitting and lazy demo chunks, self-hosted font preloads, a small WebP texture, and original optimized imagery. Its main runtime bundle was approximately 94 kB gzip; route and demo chunks were small. Canvas has no idle loop, caps resolution at 2×, and cancels on reduced-motion changes.
 
 Performance measurements should distinguish the actual edge delivery from Vite's local preview, which can serve uncompressed text. Lab results are not field INP or real-user Core Web Vitals. Hosted performance and transition behavior are audited against the deployed artifact.
 
@@ -45,4 +45,6 @@ Personally inspected the populated chronological archive, empty archive, manuscr
 
 Local Chromium observations show negligible layout movement (under 0.00003 CLS) across 1920, 1366, 768, 390 and 320 px. These are unthrottled local lab observations, not real-user vitals. Server-only validation was separated from the browser model, removing roughly 80 kB of decoded JavaScript from the public archive. Plate and code rendering remain lazy; the archive test rejects accidental editor/article bundle loading. The private editor's larger maintained Plate/Markdown bundle is an intentional author-only cost.
 
-The performance scores above belong to the previous portfolio deployment. Hosted Writing and Studio verification is repeated after publishing the exact validated application; `test:hosted` keeps the existing owner access credential in process memory only. Platform access and app author authorization are separate boundaries.
+The current full quality gate passes 47 Chromium checks plus the independent Worker/client base-path deployment. The live author session, durable saving after reload, private preview, image-paste compression/upload to R2, and editable captions were personally verified in the hosted browser. Hosted responsive inspection includes 1920, 1366, 768, and 320 px; local reading/editor checks additionally cover 390 px.
+
+The first hosted dispatch audit exposed static sitemap/robots shadowing and a missing ASSETS history fallback that local Wrangler previews did not reveal. Discovery documents now belong only to the Worker, and missing HTML routes receive an explicit app shell. Article JSON-LD is verified to occur once. `test:hosted` reuses the existing gateway access credential in process memory; that credential supplies no author identity, so Studio APIs must reject it and forged identity headers. Platform access and app author authorization remain separate boundaries.

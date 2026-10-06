@@ -56,14 +56,8 @@ for (const path of [...paths, '/404']) {
   await mkdir(filename.slice(0, filename.lastIndexOf('/')), { recursive: true });
   await writeFile(filename, template.replace('<!-- page-head -->', tags));
 }
-await writeFile(
-  `${output}/sitemap.xml`,
-  `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((path) => `<url><loc>${escape(metadataFor(path, origin, base).url)}</loc></url>`).join('')}</urlset>`,
-);
-await writeFile(
-  `${output}/robots.txt`,
-  `User-agent: *\nAllow: ${base}\nSitemap: ${new URL(`${base}sitemap.xml`, origin).href}\n`,
-);
+// Discovery documents belong to the Worker. Sites dispatch serves matching
+// assets first, so static copies would shadow the live publication archive.
 await writeFile(
   `${output}/manifest.webmanifest`,
   JSON.stringify({
@@ -82,4 +76,4 @@ await writeFile(
     })),
   }),
 );
-console.log(`Emitted ${paths.length} route documents, 404, sitemap, robots, and manifest.`);
+console.log(`Emitted ${paths.length} route documents, 404, and manifest.`);
