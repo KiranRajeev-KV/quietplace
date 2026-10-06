@@ -12,6 +12,7 @@ The quality gate runs against the Vite production artifact, with the same suite 
 - Keyboard skip navigation and visible focus.
 - Native transitions that finish and cease entirely under reduced motion.
 - Every registered route loaded directly and refreshed.
+- Document titles remain populated throughout lazy route startup.
 - Client navigation within one document, native back/forward, and scroll restoration.
 - Project switching, hash links, compatibility redirects, and deliberate 404 content.
 - All three working demos, source disclosure, unsupported query handling, workflow control, and persistent reader settings.
@@ -31,3 +32,5 @@ Private access is preserved. Standard visits require ChatGPT sign-in. Unknown SP
 The application uses automatic route splitting and lazy demo chunks, self-hosted font preloads, a small WebP texture, and original optimized imagery. The main runtime bundle is approximately 94 kB gzip; route and demo chunks are small. Canvas has no idle loop, caps resolution at 2×, and cancels on reduced-motion changes.
 
 Performance measurements should distinguish the actual edge delivery from Vite's local preview, which can serve uncompressed text. Lab results are not field INP or real-user Core Web Vitals. Hosted performance and transition behavior are audited against the deployed artifact.
+
+The hosted home audit returned 99 performance / 100 accessibility / 100 SEO, with 1.8 s LCP, 60 ms TBT, and zero CLS. A repeat under the host's challenge script returned 90 performance with 1.7 s LCP and 0.002 CLS. The 81 best-practices score is caused by a deprecated storage API in Cloudflare's injected `/cdn-cgi/challenge-platform/` script; that code is outside this repository. These are lab samples, not a fixed performance guarantee.

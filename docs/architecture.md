@@ -20,7 +20,7 @@ Internal links use typed `Link`, including hashes. External and mail links use o
 
 A small build script emits known HTML route documents from the Vite template, with static title, description, canonical, Open Graph, and Twitter metadata. Social crawlers receive metadata without running JavaScript. The interactive content is client-rendered; this does not pretend to be full SSR or a prerendered content site.
 
-Static head tags are removed once during startup. TanStack `HeadContent` then owns current metadata. The root supplies only default meta tags; canonicals belong to leaf routes to avoid duplicate links. Unknown routes inherit noindex defaults.
+Static head tags remain during initial lazy route loading and are removed once React commits its live head tags. TanStack `HeadContent` then owns current metadata. This avoids an empty document title during startup. The root supplies only default meta tags; canonicals belong to leaf routes to avoid duplicate links. Unknown routes inherit noindex defaults.
 
 The build also generates the sitemap, robots file, and manifest. A shared metadata function keeps content and canonical decisions consistent between the app and build script. Node's supported type stripping runs this small TypeScript helper directly; no extra script transpiler is installed.
 

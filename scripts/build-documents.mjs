@@ -7,7 +7,10 @@ import { defaultSiteUrl } from '../src/content/site.ts';
 const env = { ...loadEnv('production', process.cwd(), 'VITE_'), ...process.env };
 const base = env.VITE_BASE_PATH || '/';
 const origin = env.VITE_SITE_URL || defaultSiteUrl;
-const template = await readFile('dist/index.html', 'utf8');
+const template = (await readFile('dist/index.html', 'utf8')).replace(
+  /<title data-static-head>.*?<\/title>\s*/,
+  '',
+);
 const paths = [
   '/',
   '/projects',

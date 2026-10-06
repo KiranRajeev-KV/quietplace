@@ -155,6 +155,8 @@ for (const path of [
   test(`detail route at narrow width: ${path}`, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 640 });
     await page.goto(path);
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+    await expect(page.locator('main h1')).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),

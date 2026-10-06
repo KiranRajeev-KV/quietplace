@@ -53,7 +53,7 @@ try {
   );
 } finally {
   await browser?.close();
-  await new Promise((resolve) => (server ? server.httpServer.close(resolve) : resolve()));
+  await server?.close();
   await rm(directory, { recursive: true, force: true });
   if (previous === undefined) delete process.env.VITE_BASE_PATH;
   else process.env.VITE_BASE_PATH = previous;

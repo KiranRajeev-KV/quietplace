@@ -12,6 +12,15 @@ for (const route of routes) {
   test(`direct load and refresh: ${route.path}`, async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
+    await page.addInitScript(() => {
+      document.addEventListener('DOMContentLoaded', () => {
+        document.documentElement.dataset.blankTitle = String(!document.title.trim());
+        const observer = new MutationObserver(() => {
+          if (!document.title.trim()) document.documentElement.dataset.blankTitle = 'true';
+        });
+        observer.observe(document.head, { childList: true, subtree: true, characterData: true });
+      });
+    });
     const response = await page.goto(route.path);
     expect(response?.status()).toBe(200);
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
@@ -21,6 +30,7 @@ for (const route of routes) {
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
     await expect(page.locator('main h1')).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('data-blank-title', 'false');
     expect(errors).toEqual([]);
   });
 }
