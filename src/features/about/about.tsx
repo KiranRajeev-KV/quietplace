@@ -4,7 +4,7 @@ export function About({ standalone = false }: { standalone?: boolean }) {
   return (
     <section id="about" className="about-section wrap" aria-labelledby="about-title">
       <div className="section-index micro" data-reveal>
-        02 / A LITTLE ABOUT ME
+        03 / A LITTLE ABOUT ME
       </div>
       <div className="about-main" data-reveal>
         <Heading id="about-title">

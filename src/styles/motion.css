@@ -84,6 +84,26 @@ html[data-initial='false'] [data-intro] {
 .site-header {
   view-transition-name: navigation;
 }
+.studio-header {
+  view-transition-name: navigation;
+}
+.writing-entry h3,
+.publication h1,
+.desk-title {
+  view-transition-class: writing-title;
+}
+::view-transition-group(.writing-title) {
+  animation-duration: var(--duration-page);
+  animation-timing-function: var(--ease);
+}
+:root:active-view-transition-type(writing-open)::view-transition-new(page),
+:root:active-view-transition-type(manuscript-preview)::view-transition-new(page) {
+  animation-name: study-arrive;
+}
+:root:active-view-transition-type(writing-close)::view-transition-new(page),
+:root:active-view-transition-type(manuscript-return)::view-transition-new(page) {
+  animation-name: page-return;
+}
 ::view-transition-group(navigation) {
   animation-duration: var(--duration-ink);
 }

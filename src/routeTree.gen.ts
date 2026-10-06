@@ -13,9 +13,16 @@ import { Route as IndexRouteImport } from './routes/index';
 import { Route as AboutRouteImport } from './routes/about';
 import { Route as ColophonRouteImport } from './routes/colophon';
 import { Route as ProjectsRouteImport } from './routes/projects';
+import { Route as StudioRouteImport } from './routes/studio';
 import { Route as WorkRouteImport } from './routes/work';
+import { Route as WritingRouteImport } from './routes/writing';
 import { Route as ProjectsSlugRouteImport } from './routes/projects_.$slug';
+import { Route as StudioIndexRouteImport } from './routes/studio.index';
+import { Route as StudioIdRouteImport } from './routes/studio.$id';
+import { Route as StudioNewRouteImport } from './routes/studio.new';
 import { Route as WorkSlugRouteImport } from './routes/work_.$slug';
+import { Route as WritingSlugRouteImport } from './routes/writing_.$slug';
+import { Route as StudioIdPreviewRouteImport } from './routes/studio.$id_.preview';
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -37,9 +44,19 @@ const ProjectsRoute = ProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any);
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const WorkRoute = WorkRouteImport.update({
   id: '/work',
   path: '/work',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const WritingRoute = WritingRouteImport.update({
+  id: '/writing',
+  path: '/writing',
   getParentRoute: () => rootRouteImport,
 } as any);
 const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
@@ -47,10 +64,35 @@ const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
   path: '/projects/$slug',
   getParentRoute: () => rootRouteImport,
 } as any);
+const StudioIndexRoute = StudioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudioRoute,
+} as any);
+const StudioIdRoute = StudioIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => StudioRoute,
+} as any);
+const StudioNewRoute = StudioNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => StudioRoute,
+} as any);
 const WorkSlugRoute = WorkSlugRouteImport.update({
   id: '/work_/$slug',
   path: '/work/$slug',
   getParentRoute: () => rootRouteImport,
+} as any);
+const WritingSlugRoute = WritingSlugRouteImport.update({
+  id: '/writing_/$slug',
+  path: '/writing/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const StudioIdPreviewRoute = StudioIdPreviewRouteImport.update({
+  id: '/$id_/preview',
+  path: '/$id/preview',
+  getParentRoute: () => StudioRoute,
 } as any);
 
 export interface FileRoutesByFullPath {
@@ -58,9 +100,16 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute;
   '/colophon': typeof ColophonRoute;
   '/projects': typeof ProjectsRoute;
+  '/studio': typeof StudioRouteWithChildren;
   '/work': typeof WorkRoute;
+  '/writing': typeof WritingRoute;
   '/projects/$slug': typeof ProjectsSlugRoute;
+  '/studio/$id': typeof StudioIdRoute;
+  '/studio/new': typeof StudioNewRoute;
   '/work/$slug': typeof WorkSlugRoute;
+  '/writing/$slug': typeof WritingSlugRoute;
+  '/studio/': typeof StudioIndexRoute;
+  '/studio/$id/preview': typeof StudioIdPreviewRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
@@ -68,8 +117,14 @@ export interface FileRoutesByTo {
   '/colophon': typeof ColophonRoute;
   '/projects': typeof ProjectsRoute;
   '/work': typeof WorkRoute;
+  '/writing': typeof WritingRoute;
   '/projects/$slug': typeof ProjectsSlugRoute;
+  '/studio/$id': typeof StudioIdRoute;
+  '/studio/new': typeof StudioNewRoute;
   '/work/$slug': typeof WorkSlugRoute;
+  '/writing/$slug': typeof WritingSlugRoute;
+  '/studio': typeof StudioIndexRoute;
+  '/studio/$id/preview': typeof StudioIdPreviewRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
@@ -77,9 +132,16 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute;
   '/colophon': typeof ColophonRoute;
   '/projects': typeof ProjectsRoute;
+  '/studio': typeof StudioRouteWithChildren;
   '/work': typeof WorkRoute;
+  '/writing': typeof WritingRoute;
   '/projects_/$slug': typeof ProjectsSlugRoute;
+  '/studio/$id': typeof StudioIdRoute;
+  '/studio/new': typeof StudioNewRoute;
   '/work_/$slug': typeof WorkSlugRoute;
+  '/writing_/$slug': typeof WritingSlugRoute;
+  '/studio/': typeof StudioIndexRoute;
+  '/studio/$id_/preview': typeof StudioIdPreviewRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
@@ -88,9 +150,16 @@ export interface FileRouteTypes {
     | '/about'
     | '/colophon'
     | '/projects'
+    | '/studio'
     | '/work'
+    | '/writing'
     | '/projects/$slug'
-    | '/work/$slug';
+    | '/studio/$id'
+    | '/studio/new'
+    | '/work/$slug'
+    | '/writing/$slug'
+    | '/studio/'
+    | '/studio/$id/preview';
   fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
@@ -98,17 +167,30 @@ export interface FileRouteTypes {
     | '/colophon'
     | '/projects'
     | '/work'
+    | '/writing'
     | '/projects/$slug'
-    | '/work/$slug';
+    | '/studio/$id'
+    | '/studio/new'
+    | '/work/$slug'
+    | '/writing/$slug'
+    | '/studio'
+    | '/studio/$id/preview';
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/colophon'
     | '/projects'
+    | '/studio'
     | '/work'
+    | '/writing'
     | '/projects_/$slug'
-    | '/work_/$slug';
+    | '/studio/$id'
+    | '/studio/new'
+    | '/work_/$slug'
+    | '/writing_/$slug'
+    | '/studio/'
+    | '/studio/$id_/preview';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -116,9 +198,12 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute;
   ColophonRoute: typeof ColophonRoute;
   ProjectsRoute: typeof ProjectsRoute;
+  StudioRoute: typeof StudioRouteWithChildren;
   WorkRoute: typeof WorkRoute;
+  WritingRoute: typeof WritingRoute;
   ProjectsSlugRoute: typeof ProjectsSlugRoute;
   WorkSlugRoute: typeof WorkSlugRoute;
+  WritingSlugRoute: typeof WritingSlugRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -151,11 +236,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/studio': {
+      id: '/studio';
+      path: '/studio';
+      fullPath: '/studio';
+      preLoaderRoute: typeof StudioRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/work': {
       id: '/work';
       path: '/work';
       fullPath: '/work';
       preLoaderRoute: typeof WorkRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/writing': {
+      id: '/writing';
+      path: '/writing';
+      fullPath: '/writing';
+      preLoaderRoute: typeof WritingRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/projects_/$slug': {
@@ -165,6 +264,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsSlugRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/studio/': {
+      id: '/studio/';
+      path: '/';
+      fullPath: '/studio/';
+      preLoaderRoute: typeof StudioIndexRouteImport;
+      parentRoute: typeof StudioRoute;
+    };
+    '/studio/$id': {
+      id: '/studio/$id';
+      path: '/$id';
+      fullPath: '/studio/$id';
+      preLoaderRoute: typeof StudioIdRouteImport;
+      parentRoute: typeof StudioRoute;
+    };
+    '/studio/new': {
+      id: '/studio/new';
+      path: '/new';
+      fullPath: '/studio/new';
+      preLoaderRoute: typeof StudioNewRouteImport;
+      parentRoute: typeof StudioRoute;
+    };
     '/work_/$slug': {
       id: '/work_/$slug';
       path: '/work/$slug';
@@ -172,17 +292,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkSlugRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/writing_/$slug': {
+      id: '/writing_/$slug';
+      path: '/writing/$slug';
+      fullPath: '/writing/$slug';
+      preLoaderRoute: typeof WritingSlugRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/studio/$id_/preview': {
+      id: '/studio/$id_/preview';
+      path: '/$id/preview';
+      fullPath: '/studio/$id/preview';
+      preLoaderRoute: typeof StudioIdPreviewRouteImport;
+      parentRoute: typeof StudioRoute;
+    };
   }
 }
+
+interface StudioRouteChildren {
+  StudioIdRoute: typeof StudioIdRoute;
+  StudioNewRoute: typeof StudioNewRoute;
+  StudioIndexRoute: typeof StudioIndexRoute;
+  StudioIdPreviewRoute: typeof StudioIdPreviewRoute;
+}
+
+const StudioRouteChildren: StudioRouteChildren = {
+  StudioIdRoute: StudioIdRoute,
+  StudioNewRoute: StudioNewRoute,
+  StudioIndexRoute: StudioIndexRoute,
+  StudioIdPreviewRoute: StudioIdPreviewRoute,
+};
+
+const StudioRouteWithChildren =
+  StudioRoute._addFileChildren(StudioRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ColophonRoute: ColophonRoute,
   ProjectsRoute: ProjectsRoute,
+  StudioRoute: StudioRouteWithChildren,
   WorkRoute: WorkRoute,
+  WritingRoute: WritingRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
   WorkSlugRoute: WorkSlugRoute,
+  WritingSlugRoute: WritingSlugRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

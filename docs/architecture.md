@@ -1,50 +1,36 @@
 # Production architecture
 
-## Foundation
+React + Vite + strict TypeScript + file-based TanStack Router remain the foundation. Tailwind supplies tokens/utilities while custom CSS owns the editorial composition. TanStack Query now has a real role: remote manuscripts, sessions, publication snapshots, mutations and invalidation. Plate is confined to the Writing domain and lazily loaded article/editor routes.
 
-React + Vite + TypeScript + file-based TanStack Router. Tailwind 4 supplies the theme and utility layer; existing custom composition CSS stays intact. A preflight reset is deliberately omitted to preserve the established controls and editorial typography. All runtime state is browser-local, so Query is unnecessary.
+## Boundaries
 
-The Vite Router plugin precedes React, generates typed routes, and automatically splits route components. Route definitions own matching, validation, head metadata, and redirects. Feature modules own presentation. Each demonstration is a separate React lazy chunk.
+- Routes own loaders, typed paths, head metadata and lazy presentation.
+- Features own the existing portfolio and the new Writing domain.
+- Writing's domain owns versioned structured documents, validation, kinds, slugs, excerpts, reading time, heading anchors and syntax grammars.
+- Plate's React and static registries use the same canonical node vocabulary. Public reading and private preview share `ArticleView` and `DocumentRenderer`.
+- A browser repository owns API transport. Query owns caching and mutations. An autosave coordinator owns serialized revisioned writes and local recovery.
+- The Worker owns authorization, validation, prepared D1 queries, atomic publication/media changes and R2 access. Drizzle generates SQL migrations; runtime queries do not depend on its ORM.
 
-`src/routes/projects_.$slug.tsx` uses TanStack's non-nested filename convention: it shares the persistent root shell while remaining independent of the listing component. The legacy `work_.$slug.tsx` also remains non-nested so the `/work` listing redirect cannot intercept detail URLs.
+The manuscript is the only editable representation. A publication is an immutable derived edition, not a second editable document. Public queries never select manuscript JSON. Device recovery is temporary protection, not production persistence.
 
-## Routing failure and correction
+## Delivery and routing
 
-The prior deployed origin returned HTTP 404 for `/projects` and `/about`; neither was a registered route. `/work/thread` returned 200. The migration adds real listing/about routes and replaces the server routing stack with a history SPA.
+Cloudflare's maintained Vite plugin builds `dist/client` and `dist/server`. Sites provisions logical `DB` and `FILES` bindings. Every application link uses TanStack Router; external links, RSS, sign-in/out and download destinations remain ordinary links. Browser history and scroll restoration use history-entry keys. Native View Transitions connect pages; CSS supplies a restrained fallback.
 
-Sites' packager explicitly accepts `static.not_found_handling: "single-page-application"`. The application therefore uses browser history, not hash routing or path-shaped external anchors. Static metadata documents are emitted as `projects.html`, `about.html`, and `projects/thread.html`; Cloudflare's normal HTML handling serves these through clean paths. The explicit SPA fallback handles unlisted paths and compatibility links.
+The Worker renders Writing with the actual Router shell, static Plate renderer and article components. It seeds public Query data into escaped JSON. The browser waits for its lazy route before committing the identical geometry; it does not claim experimental hydration support. Article HTML, metadata and readable content are available without JavaScript. Missing/draft articles return HTTP 404. Known portfolio route metadata remains prebuilt; interactive portfolio content remains client-rendered. Dynamic RSS and sitemap only use published editions.
 
-Internal links use typed `Link`, including hashes. External and mail links use ordinary anchors. TanStack stores scroll positions by history entry, resets new pages, and restores previous entries before paint. Native back/forward uses the same transition policy. The previous `/work` URLs replace their history entry when redirecting.
+`VITE_BASE_PATH` controls Vite, Router, links and assets. The Vite plugin configures matching Worker `BASE_PATH`; Sites runtime configuration must agree. A separate production test verifies `/portfolio/` without modifying the main artifact. Asset fallback preserves nested route refreshes.
 
-## Metadata and delivery
+## Authentication and safety
 
-A small build script emits known HTML route documents from the Vite template, with static title, description, canonical, Open Graph, and Twitter metadata. Social crawlers receive metadata without running JavaScript. The interactive content is client-rendered; this does not pretend to be full SSR or a prerendered content site.
+Dispatch-owned ChatGPT sign-in supplies trusted identity headers. The Worker requires a user ID and an explicit server-side author email allowlist for every Studio API operation. Anonymous and other signed-in users cannot access manuscripts or draft media. The Sites local simulator strips forged headers and provides a development identity; it never ships as an auth bypass. Same-origin checks and a non-simple mutation header provide the CSRF boundary. An alternate deployment must verify identity itself and must not trust publicly supplied headers.
 
-Static head tags remain during initial lazy route loading and are removed once React commits its live head tags. TanStack `HeadContent` then owns current metadata. This avoids an empty document title during startup. The root supplies only default meta tags; canonicals belong to leaf routes to avoid duplicate links. Unknown routes inherit noindex defaults.
+Revisions increment through conditional updates. Publication and public media membership change in atomic D1 batches. Slugs lock on first publication and remain reserved after deletion. Unpublish/archive remove snapshots and public media membership. The server checks media visibility on each request so revocation takes immediate effect.
 
-The build also generates the sitemap, robots file, and manifest. A shared metadata function keeps content and canonical decisions consistent between the app and build script. Node's supported type stripping runs this small TypeScript helper directly; no extra script transpiler is installed.
+## Tooling
 
-`VITE_BASE_PATH` controls Vite, Router, asset URLs, manifest scope, and canonical prefixes. The quality gate builds a separate temporary `/portfolio/` artifact and checks navigation, refresh, history, links, and fonts. Main build output is unaffected.
+Oxlint, Oxfmt and Knip provide a repository-wide gate, alongside strict TypeScript (including the Worker and database schema), production builds and browser verification. Dependencies serve specific features; no additional motion library, CMS framework, collaboration engine, or competing editor is installed. One accessibility lint exception permits keyboard scrolling in code regions; actual semantics, focus and WCAG AA are browser-tested.
 
-## Tooling and hygiene
+Fonts are self-hosted; code grammars are limited to eight useful languages plus plain text. Archive routes do not import Plate. Author-only editor bundles include maintained rich-text and Markdown machinery; they do not load on the portfolio or Writing index.
 
-Oxlint enables TypeScript, React/hooks, imports, accessibility, and correctness rules. The preference-only `prefer-tag-over-role` rule is disabled because structured result/status containers and grouped controls legitimately use ARIA roles; WCAG behavior is verified with axe and keyboard tests. Oxfmt owns formatting. Knip scans routes, scripts, CSS, and tests without ignored dependencies or blanket source exclusions.
-
-Strict TypeScript includes unchecked-index access, unused declarations/parameters, consistent casing, and erasable syntax. Path alias `@/` refers only to `src/`.
-
-Only React, React DOM, and TanStack Router are direct runtime dependencies. There is no server framework, RSC pipeline, scroll library, animation library, WebGL library, or remote-query layer. Licensed Fontsource packages and image tooling are development dependencies used by reproducible asset scripts.
-
-## Research
-
-- [TanStack file routing](https://tanstack.com/router/latest/docs/routing/file-based-routing)
-- [Automatic splitting](https://tanstack.com/router/latest/docs/guide/automatic-code-splitting)
-- [Head management](https://tanstack.com/router/latest/docs/guide/document-head-management)
-- [Scroll restoration](https://tanstack.com/router/latest/docs/guide/scroll-restoration)
-- [Vite production/base paths](https://vite.dev/guide/build)
-- [Tailwind Vite integration](https://tailwindcss.com/docs/installation/using-vite)
-- [Oxlint configuration](https://oxc.rs/docs/guide/usage/linter/config)
-- [Oxfmt configuration](https://oxc.rs/docs/guide/usage/formatter/config)
-- [Knip configuration](https://knip.dev/reference/configuration)
-- [Cloudflare SPA routing](https://developers.cloudflare.com/workers/static-assets/routing/single-page-application/)
-- [Cloudflare HTML handling](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)
-- [Vite on Vercel](https://vercel.com/docs/frameworks/frontend/vite)
+Research links and schema/publishing decisions: [writing.md](writing.md). Router, Vite, native motion and original visual research remain documented in [design-notes.md](design-notes.md) and [motion.md](motion.md).

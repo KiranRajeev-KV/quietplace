@@ -1,4 +1,4 @@
-// Emit real route documents for static hosts and social crawlers; no server runtime.
+// Portfolio route heads remain prebuilt; Writing is rendered by the Worker.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { loadEnv } from 'vite';
 import { metadataFor } from '../src/lib/metadata.ts';
@@ -7,7 +7,8 @@ import { defaultSiteUrl } from '../src/content/site.ts';
 const env = { ...loadEnv('production', process.cwd(), 'VITE_'), ...process.env };
 const base = env.VITE_BASE_PATH || '/';
 const origin = env.VITE_SITE_URL || defaultSiteUrl;
-const template = (await readFile('dist/index.html', 'utf8')).replace(
+const output = 'dist/client';
+const template = (await readFile(`${output}/index.html`, 'utf8')).replace(
   /<title data-static-head>.*?<\/title>\s*/,
   '',
 );
@@ -51,20 +52,20 @@ for (const path of [...paths, '/404']) {
     ),
     `<link data-static-head rel="canonical" href="${escape(page.url)}" />`,
   ].join('\n');
-  const filename = path === '/' ? 'dist/index.html' : `dist${path}.html`;
+  const filename = path === '/' ? `${output}/index.html` : `${output}${path}.html`;
   await mkdir(filename.slice(0, filename.lastIndexOf('/')), { recursive: true });
   await writeFile(filename, template.replace('<!-- page-head -->', tags));
 }
 await writeFile(
-  'dist/sitemap.xml',
+  `${output}/sitemap.xml`,
   `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((path) => `<url><loc>${escape(metadataFor(path, origin, base).url)}</loc></url>`).join('')}</urlset>`,
 );
 await writeFile(
-  'dist/robots.txt',
+  `${output}/robots.txt`,
   `User-agent: *\nAllow: ${base}\nSitemap: ${new URL(`${base}sitemap.xml`, origin).href}\n`,
 );
 await writeFile(
-  'dist/manifest.webmanifest',
+  `${output}/manifest.webmanifest`,
   JSON.stringify({
     name: 'KR — Quiet systems',
     short_name: 'KR',

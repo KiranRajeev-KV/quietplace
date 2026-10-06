@@ -67,9 +67,9 @@ test('navigation, project switching, hash links, and legacy URLs work', async ({
   await page.getByRole('link', { name: 'BACK TO TOP' }).click();
   await expect(page).toHaveURL(/\/projects\/relay#top$/);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(50);
-  await page.getByRole('link', { name: 'About 02', exact: true }).click();
+  await page.getByRole('link', { name: 'About 03', exact: true }).click();
   await expect(page).toHaveURL(/\/about$/);
-  await page.getByRole('link', { name: 'Contact 03', exact: true }).click();
+  await page.getByRole('link', { name: 'Contact 04', exact: true }).click();
   await expect(page).toHaveURL(/\/#contact$/);
   await expect(page.locator('#contact')).toBeInViewport();
   await page.goto('/work/thread');
@@ -104,7 +104,7 @@ test('native transitions run, finish, and disappear under reduced motion', async
     )
     .toBe(0);
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.getByRole('link', { name: 'About 02' }).click();
+  await page.getByRole('link', { name: 'About 03' }).click();
   await expect(page).toHaveURL(/\/about$/);
   await expect(page.locator('html')).toHaveAttribute('data-transition-count', '1');
   expect(

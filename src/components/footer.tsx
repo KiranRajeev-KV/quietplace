@@ -6,7 +6,7 @@ export function Footer() {
     <footer id="contact" className="site-footer">
       <div className="wrap">
         <div className="contact-eyebrow micro" data-reveal>
-          03 / WHAT’S NEXT?
+          04 / WHAT’S NEXT?
         </div>
         <div className="contact-content" data-reveal>
           <h2>

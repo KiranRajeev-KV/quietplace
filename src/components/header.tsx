@@ -16,8 +16,11 @@ export function Header() {
         <Link to="/projects" className="nav-link">
           Work<span>01</span>
         </Link>
+        <Link to="/writing" className="nav-link">
+          Writing<span>02</span>
+        </Link>
         <Link to="/about" className="nav-link">
-          About<span>02</span>
+          About<span>03</span>
         </Link>
         <Link
           to="/"
@@ -25,7 +28,7 @@ export function Header() {
           activeOptions={{ exact: true, includeHash: true }}
           className="nav-link"
         >
-          Contact<span>03</span>
+          Contact<span>04</span>
         </Link>
       </nav>
       <LocalTime />

@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "quiet-writing",
+  "main": "src/server/index.ts",
+  "compatibility_date": "2026-10-06",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true,
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "quiet-writing", "migrations_dir": "drizzle" },
+  ],
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "quiet-writing-media" }],
+  "vars": { "SITE_URL": "https://kr-quiet-systems.kiranrajeevkv.chatgpt.site", "BASE_PATH": "/" },
+}

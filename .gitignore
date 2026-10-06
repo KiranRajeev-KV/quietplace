@@ -12,3 +12,6 @@
 *.pem
 .DS_Store
 .pnpm-debug.log*
+.wrangler/
+.cloudflare/
+.dev.vars

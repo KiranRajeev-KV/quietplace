@@ -25,6 +25,11 @@ export function metadataFor(
       title: 'Colophon — KR',
       description: 'A note on the ideas, materials, and independent studies behind this portfolio.',
     },
+    '/writing': {
+      title: 'Writing — KR',
+      description:
+        'Notes on making, learning, and paying attention. An open notebook for thoughts in progress.',
+    },
   };
   const page = project
     ? { title: `${project.title} — KR`, description: project.description }
