@@ -1,87 +1,101 @@
 # KR — Quiet systems
 
-A complete, responsive personal portfolio shaped by Japanese editorial restraint: warm paper, charcoal ink, asymmetrical typography, and a woven line field that responds to the pointer and settles to rest.
+A finished, editorial portfolio with warm paper, charcoal typography, asymmetrical space, and a responsive woven line field. Its project artwork moves between the listing and case-study views through native View Transitions.
 
-Includes a home page, three independently addressable case studies with working local prototypes, a colophon, a designed 404, self-hosted licensed fonts, icons, a web manifest, canonical metadata, sitemap, and original social previews.
+Built with React 19, Vite 8, strict TypeScript, file-based TanStack Router, and Tailwind CSS 4. There is no server framework or remote data dependency. The three local prototypes remain fully functional.
 
 ## Run
 
-Node 22.13+ and pnpm are required. pnpm is the only JavaScript package manager used in this repository.
+Node 22.18+ and pnpm are required.
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open http://localhost:3000.
+Development: http://localhost:3000.
 
 ```sh
 pnpm build
-pnpm start
+pnpm preview
 ```
 
-The default build uses the provided Sites foundation: standard Next App Router APIs, React Server Components, and Vinext/Vite output for Cloudflare Workers. Vinext is beta. The application also passes a conventional Next production build:
+Production preview: http://localhost:4173. `pnpm build` emits the Vite application, seven route documents with static social metadata, a 404 document, sitemap, robots file, and manifest.
+
+## Quality gate
+
+Install the browser once:
 
 ```sh
-pnpm dev:next
-pnpm build:next
-pnpm start:next
+pnpm exec playwright install chromium
+pnpm check
 ```
 
-## Deploy
+`check` generates the typed route tree, runs strict TypeScript, Oxlint, Oxfmt, Knip, a production build, the production browser suite, and a separate production build/test under `/portfolio/`. Browser checks cover geometry, WCAG AA, keyboard focus, reduced motion, native transitions, browser history, scroll restoration, direct loading, refresh, project switching, all demos, links, assets, and metadata.
 
-The private Sites project is recorded in `.openai/hosting.json`. In Codex, request publication through the Sites connector; it builds, packages, saves the source version, and deploys with the current audience. Credentials are never stored in the repository.
+Individual checks:
 
-For conventional Next hosting on Vercel:
+```sh
+pnpm typecheck
+pnpm lint
+pnpm lint:fix
+pnpm format
+pnpm format:check
+pnpm knip
+pnpm test
+pnpm test:base-path
+```
+
+Tests start a production preview automatically. Set `TEST_URL` to test an already running server. `pnpm test:hosted` accepts one hidden JSON line containing the existing private Site URL and owner token. It does not create or rotate access tokens, persist credentials, or change the audience. Production QA uses the same browser suite against the deployed origin.
+
+## Routes and hosting
+
+- `/`: the original complete home composition.
+- `/projects`: selected studies.
+- `/projects/thread`, `/projects/relay`, `/projects/fieldnotes`: case studies and working local demos.
+- `/about`: the practice statement and capabilities.
+- `/colophon`: materials, independent-study disclosure, and contact.
+- `/work` and `/work/:slug`: compatibility redirects for existing links.
+- Unknown paths: the designed 404 with noindex metadata.
+
+Every application link uses TanStack Router. Email, social, and résumé destinations remain ordinary links. Scroll restoration uses history-entry keys; in-page hashes use Router's native hash support.
+
+The existing private [Sites portfolio](https://kr-quiet-systems.kiranrajeevkv.chatgpt.site) uses the explicit static `single-page-application` fallback in `.openai/hosting.json`. This permits clean history paths and direct nested-route loads. A normal owner visit still requires ChatGPT login. Unknown SPA paths can return HTTP 200 while rendering the 404; a static SPA cannot choose a different response status after client routing. No authentication or routing bypass is embedded in the application.
+
+To publish updates in Codex, use the Sites connector for the existing project. It validates and publishes the current source, preserving the audience.
+
+For Vercel:
 
 ```sh
 pnpm dlx vercel --prod
 ```
 
-`vercel.json` selects `pnpm build:next`. Set `NEXT_PUBLIC_SITE_URL` to your final production origin in the deployment environment so canonical, sitemap, and social URLs use your domain. The current fallback is the private Sites preview origin. No API keys are required.
+`vercel.json` maps known routes to their static metadata documents and provides an SPA fallback. Set `VITE_SITE_URL` to your public origin before building. `VITE_BASE_PATH` defaults to `/`; it must include leading and trailing slashes, for example `/portfolio/`. The Vite base, Router basepath, asset URLs, manifest, and generated canonical URLs share that value. An alternate host must serve the build under that prefix and provide an SPA fallback there. Vercel's included configuration assumes root hosting.
 
-## Content to replace
+## Architecture
 
-- `content/profile.ts`: KR, India/IST, role, and optional email, GitHub, LinkedIn, résumé URLs. Missing destinations are omitted rather than guessed. Setting `email` enables mail links automatically.
-- `components/about.tsx`: the provisional practice statement. There are no invented jobs, clients, awards, qualifications, or metrics.
-- `content/projects.ts`: the three explicitly labeled independent concepts. These are real interface studies created for this portfolio, not claimed client projects. Each has a problem, approach, decisions, outcome, and functioning local demo.
-- `content/knowledge.ts`: the original four-note collection behind Thread. The demo uses deterministic local retrieval, not an external language model.
-- `components/demos/fieldnotes-demo.tsx`: the original reader essay.
+- `src/routes/`: small route definitions; the Vite plugin generates and splits the route tree.
+- `src/features/`: home, projects, about, colophon, and independently loaded demos.
+- `src/components/`: shared navigation, footer, Canvas, route states, and lifecycle effects.
+- `src/content/`: typed profile, projects, knowledge, and default origin.
+- `src/lib/`: metadata and motion decisions.
+- `src/styles/`: Tailwind theme/design tokens, established portfolio composition, and centralized motion.
+- `scripts/`: static document generation, licensed font copying, project art export, base-path checks, and private hosted QA.
+- `tests/`: production browser verification.
 
-A project record currently selects one of the three original visuals/demos. To add a different project, add its content record, extend the visual/demo registry, and supply a primary social image. The case-study route and sitemap already iterate over the collection. Standard App Router routes provide a clear place to add writing, experiments, or CMS adapters.
+Add a project record, its visual/demo registry entry, and its social image. The parameter route and generated documents follow the collection automatically. Add writing or experiments as new route files and focused feature modules. Connect an API or CMS at a feature boundary when needed; add Query only when actual remote state warrants it.
 
-## Structure
+## Replaceable content
 
-- `app/`: routes, metadata, and centralized visual tokens/styles.
-- `components/`: focused page sections and progressive interactive elements.
-- `components/demos/`: each independent prototype, isolated from portfolio navigation.
-- `content/`: typed profile, projects, retrieval data, and site origin.
-- `lib/motion.ts`: shared timing/easing.
-- `public/`: optimized fonts, original imagery, texture, and icons.
-- `docs/design-notes.md`: sources, extracted principles, concept, plan, and refinements.
-- `tests/`: browser behavior, accessibility, keyboard, responsive geometry, reduced motion, metadata, and link checks.
+`src/content/profile.ts` holds KR, India/IST, role, and optional email/GitHub/LinkedIn/résumé URLs. Missing destinations are omitted. `src/features/about/about.tsx` contains the provisional practice statement. The three entries in `src/content/projects.ts` are explicitly independent concepts created for this portfolio, with no invented client history or impact metrics.
 
-## Verify
-
-With a development or production server running:
+Thread is deterministic local retrieval. Relay is a clearly labeled local workflow simulation. Fieldnotes has original writing and private local preferences, including a fallback when browser storage is blocked. No external AI requests or analytics are added.
 
 ```sh
-pnpm exec playwright install chromium
-pnpm verify
-```
-
-To run tests against a different server:
-
-```sh
-TEST_URL=http://localhost:3001 pnpm test
-```
-
-```sh
-pnpm format
 pnpm assets:fonts
 pnpm assets:projects
 ```
 
-The asset export requires the local application to be running. It captures the actual project compositions for their social previews. Font files and SIL Open Font License texts are committed; browser visits never contact a font service. The home page loads approximately 49 kB of fonts; the reader's roman font is deferred to its route.
+The project art export needs a running local application. Original assets and SIL font licenses are committed. Fonts are self-hosted; there is no third-party font request. The Canvas settles at rest, caps resolution at 2×, and stops when reduced motion is requested. Navigation preserves native scrolling and the cursor.
 
-Motion respects reduced-motion preferences, preserves native scroll and the cursor, and animates transforms/opacity. The Canvas has no continuous idle animation, caps resolution at 2×, and releases listeners/frames when unmounted. The reader stores preferences locally and keeps working when storage is blocked. No analytics, accounts, or external AI requests are added.
+Research and decisions: `docs/design-notes.md`, `docs/architecture.md`, `docs/motion.md`, and `docs/verification.md`.

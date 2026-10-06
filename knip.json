@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["src/routes/**/*.{ts,tsx}", "scripts/*.mjs"],
+  "project": ["src/**/*.{ts,tsx,css}", "scripts/*.mjs", "tests/**/*.ts", "*.ts"],
+  "ignoreDependencies": []
+}

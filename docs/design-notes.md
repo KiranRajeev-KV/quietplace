@@ -1,54 +1,38 @@
-# Quiet systems
+# Quiet systems — design notes
 
-Research and concept established October 6, 2026, before the first implementation.
+## Concept
 
-## Reference study
+The identity remains a practice in thoughtful technology: warm paper, charcoal ink, a restrained rust accent, Manrope paired with Newsreader, and a woven field that responds and settles. Japanese restraint informs the negative space and precision without literal symbols or decorative cultural shorthand.
 
-- [Clément Grellier](https://clementgrellier.fr/), [ONTO case study](https://clementgrellier.fr/studio-onto): oversized identity, restrained navigation, visual work as the primary content, transitions that connect an overview with a study. Visually inspected the live portfolio. Take the editorial confidence, not its layout or artwork.
-- [Eduard Bodak, SOTD June 14, 2025](https://www.awwwards.com/sites/eduard-bodak-portfolio): studied documented navigation microinteractions, minimap progress, copy feedback, transitions, mobile treatment. A cohesive interaction vocabulary matters more than the number of effects. Reject its loud palette and density for this brief.
-- [Awwwards portfolio / single-page collection](https://www.awwwards.com/websites/single-page-1/): recent award references expose a common pattern: strong identity, memorable transitions, and careful image presentation. An award is a reference for craft, not permission to sacrifice usability.
-- [Hara Design Institute — WHITE](https://hara.ndc.co.jp/en/books/shiro/): white as sensory material. Translate into warm paper, low-contrast rules, and useful empty space rather than symbolism.
-- [JAPAN HOUSE](https://hara.ndc.co.jp/en/works/japanhouse/): precision, delicacy, and an identity system held together by restraint. Architectural materials inform palette and rhythm, not decorative motifs.
-- [SIMOSE](https://hara.ndc.co.jp/en/works/simose/): a coherent identity across architecture, signage, graphics, and web. Use one grid and material language across overview, case studies, and reading prototype.
-- [Irobe — TAKEO PAPER SHOW 2011](https://irobe.ndc.co.jp/en/work/takeo-paper-show-2011/): print, material, and exhibition form a complete system. Project imagery should feel composed rather than inserted.
+The opening has a deliberately displaced second line. The work sequence follows an editorial rhythm: one wide study, then two asymmetrically balanced studies. The about statement is set as a large idea with a quieter supporting column. Page endings receive the same attention as the hero.
 
-## Principles extracted
+The next production pass preserves these materials while making navigation part of the composition. A thumbnail becomes a case hero, a title carries its identity across views, and the header stays still. More effects would weaken this direction.
 
-1. Space has structure: a wide outer margin, displaced second headline, and staggered project positions establish rhythm.
-2. Typography carries the identity. Manrope is precise; Newsreader italic lends warmth. Both use locally hosted Latin WOFF2 subsets under SIL OFL.
-3. Paper, ink, stone, and muted sage, with one rust punctuation mark. Texture is a tiny static tiled bitmap, never an animated full-screen filter.
-4. One recurring idea: order emerging from complexity. The woven Canvas line field reacts only to a mouse nearby and settles to rest. It is tied to the systems theme, not a decorative object.
-5. Motion uses native scrolling, transform/opacity reveals, small image shifts, and restrained page fades. No cursor replacement, scroll-jacking, sound, or 3D.
-6. Mobile is recomposed: headlines are scaled carefully, artwork has its own space, project studies become a full-width sequence, and the footer remains a considered final composition.
+## References and principles
 
-## Stack research and decision
+- [Clément Grellier](https://www.clementgrellier.fr/): typography-led developer identity and purposeful interaction. Preserve a readable first impression.
+- [Awwwards portfolio transitions](https://www.awwwards.com/inspiration/page-transition-eduard-bodak-portfolio): a transition can communicate continuity and pace. Avoid borrowing its spectacle or recreating a specific site.
+- [Hara Design Institute](https://www.ndc.co.jp/hara/en/): emptiness and material attention guide the hierarchy and warm surface.
+- [JAPAN HOUSE London](https://www.japanhouselondon.uk/): editorial treatment and considered visual relationships, rather than arbitrary cultural motifs.
+- [SIMOSE](https://simose-museum.jp/en/): a useful architectural reference for movement, intervals, and framing.
+- [Irobe Design Institute](https://www.ndc.co.jp/irobe/): clear graphic systems and intentional small details.
 
-- [Astro](https://docs.astro.build/en/concepts/why-astro/) was considered for static-first content and small islands.
-- [Vinext](https://github.com/cloudflare/vinext), [Cloudflare Vite plugin](https://developers.cloudflare.com/workers/vite-plugin/), and the provided Sites scaffold were studied. The project uses the Sites-supported Next App Router / React Server Components surface, with Vinext/Vite building for Cloudflare Workers. This provides an integrated preview/deployment path and independently addressable studies. Vinext is beta: keep the application on standard Next APIs so the project can be run with conventional Next if desired.
-- [Motion animate](https://motion.dev/docs/animate) offers a native-animation mini entry point. Use `motion/mini`, documented at approximately 2.3 kB, rather than loading its React or hybrid layers. Plain CSS handles hover states and document transition fallback.
-- GSAP, Lenis, Three.js, and React Three Fiber were considered unnecessary: there are no pinned timelines, artificial scrolling, or meaningful 3D needs.
-- [Fontsource](https://fontsource.org/docs/getting-started/install) provides versioned, self-hosted font assets and license files. The home page loads a variable Manrope subset and a static Newsreader italic subset. A static roman Newsreader subset loads only in the reader.
-- [Playwright](https://playwright.dev/docs/test-intro) and [axe-core](https://github.com/dequelabs/axe-core-npm/tree/develop/packages/playwright) are development-only verification tools for responsive overflow, keyboard access, reduced motion, local prototypes, and WCAG fundamentals.
+## Production choices
 
-## Implementation plan
+File-based TanStack Router organizes real routes for the listing, about page, case studies, and colophon. The header and navigation live in a persistent root. Existing case links remain compatible through redirects. Native View Transitions and centralized CSS supply the complete movement language; no motion package is needed.
 
-1. Establish profile and project content modules, a central token sheet and motion configuration.
-2. Build the first coherent home composition: header, typographic introduction, line field, work, about, contact.
-3. Run and inspect the first meaningful page before expanding implementation.
-4. Add dedicated case-study pages and real local demos: knowledge retrieval, inspectable workflow, and adjustable reader.
-5. Add a colophon, deliberate 404, icons, metadata, and original social imagery.
-6. Inspect large desktop, laptop, tablet, mobile, and narrow mobile. Interact with each demo and refine the entire page.
-7. Run strict type, lint, formatting, accessibility, link, production-build, and performance checks; publish a private preview where available.
+Tailwind's current Vite integration provides the theme and focused layout utilities. The established bespoke composition CSS remains. Typography and spacing take priority over a new component system. Self-hosted font files and their SIL licenses remain committed; images, paper texture, icons, and social artwork are reused and optimized.
 
-## Content boundaries
+The application has browser-local demonstrations and static content, so TanStack Query would add no value. React, React DOM, and Router are the only direct runtime packages. Oxc tools and Knip replace the previous lint/format setup, with strict TypeScript and production browser checks.
 
-KR and India are provisional identity/location assumptions derived from workspace initials and timezone. The biography is a practice statement, not an invented employment history. All projects are labeled independent concepts and have functioning browser-local prototypes. There are no fabricated metrics, client names, awards, external AI responses, or social destinations. Contact, GitHub, LinkedIn, and résumé are intentionally absent until supplied in `content/profile.ts`; a clear public contact note explains this.
+## Execution and refinements
 
-## Final refinements
+Audited the deployed routes before changing the stack. `/projects` and `/about` returned 404 because they did not exist. Added both as actual routes. Research of the current Sites packager and Cloudflare asset routing confirmed an explicit SPA fallback, permitting normal history navigation.
 
-- Small-text contrast refined on paper, sage, and ink backgrounds.
-- Mobile thumbnails simplify their internal content instead of allowing tiny elements to overlap.
-- Opening type reveals run in CSS, avoiding a hydration-dependent largest paint. Motion mini handles section entrances.
-- Newsreader reduced from variable subsets to the two static 400-weight styles actually used.
-- Paper grain compressed from 39 kB PNG to 6.6 kB WebP.
-- A standard Next production build and Vercel configuration provide a maintained hosting alternative to the Sites/Vinext build.
+Reviewed the composition in the browser at large desktop, laptop, tablet, mobile, and very narrow mobile widths. Kept the always-visible three-link navigation, restored appropriate heading hierarchy on standalone pages, preserved mobile illustration simplifications, and made focus/active states intentional.
+
+Refined transitions in both directions and caught two implementation details through tests: a parent legacy redirect intercepted detail URLs, and root/leaf head definitions emitted duplicate canonicals. Legacy detail routes now use the non-nested filename convention; leaf routes own canonicals.
+
+First-document type entrances stay separate from route snapshots. Initial keyboard focus starts at the skip link; route changes focus the main landmark without changing scroll position. A frame at rest has no continuous Canvas or route animation. Unsupported View Transition browsers keep a subtle CSS entrance and complete navigation. Reduced motion disables the transition call itself.
+
+Further architecture and motion details are in `architecture.md` and `motion.md`.

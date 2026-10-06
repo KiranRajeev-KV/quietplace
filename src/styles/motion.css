@@ -1,0 +1,231 @@
+/* Ink responds quickly; paper and images settle. Timings live in tokens.css. */
+[data-intro] {
+  animation: intro-enter var(--duration-page) var(--ease) both;
+}
+[data-intro='1'] {
+  animation-delay: 60ms;
+}
+[data-intro='2'] {
+  animation-delay: 120ms;
+}
+[data-intro='3'] {
+  animation-delay: 180ms;
+}
+[data-intro='4'] {
+  animation-delay: 240ms;
+}
+.title-line [data-intro] {
+  animation-name: type-enter;
+}
+html[data-initial='false'] [data-intro] {
+  animation: none;
+}
+[data-reveal][data-entered='true'] {
+  animation: section-enter var(--duration-page) var(--ease) both;
+}
+@keyframes intro-enter {
+  from {
+    transform: translateY(16px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes type-enter {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes section-enter {
+  from {
+    opacity: 0.75;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes page-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+@keyframes page-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--distance-page));
+  }
+}
+@keyframes page-return {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--distance-page) * -1));
+  }
+}
+@keyframes study-arrive {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+.route-stage {
+  view-transition-name: page;
+}
+.site-header {
+  view-transition-name: navigation;
+}
+::view-transition-group(navigation) {
+  animation-duration: var(--duration-ink);
+}
+::view-transition-old(navigation),
+::view-transition-new(navigation) {
+  animation: none;
+}
+::view-transition-old(page) {
+  animation: page-leave var(--duration-ink) ease-out both;
+}
+::view-transition-new(page) {
+  animation: page-arrive var(--duration-page) var(--ease) both;
+}
+:root:active-view-transition-type(study-close)::view-transition-new(page),
+:root:active-view-transition-type(page-back)::view-transition-new(page) {
+  animation-name: page-return;
+}
+:root:active-view-transition-type(study-switch)::view-transition-new(page) {
+  animation-name: study-arrive;
+}
+::view-transition-group(art-thread),
+::view-transition-group(art-relay),
+::view-transition-group(art-fieldnotes),
+::view-transition-group(title-thread),
+::view-transition-group(title-relay),
+::view-transition-group(title-fieldnotes) {
+  animation-duration: var(--duration-art);
+  animation-timing-function: var(--ease);
+}
+::view-transition-image-pair(art-thread),
+::view-transition-image-pair(art-relay),
+::view-transition-image-pair(art-fieldnotes) {
+  isolation: isolate;
+}
+::view-transition-old(art-thread),
+::view-transition-old(art-relay),
+::view-transition-old(art-fieldnotes),
+::view-transition-new(art-thread),
+::view-transition-new(art-relay),
+::view-transition-new(art-fieldnotes) {
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: normal;
+}
+@supports not (view-transition-name: page) {
+  html[data-initial='false'] .route-stage {
+    animation: page-arrive var(--duration-page) var(--ease) both;
+  }
+}
+.projects-page .selected-work,
+.about-page .about-section {
+  padding-top: clamp(90px, 11vw, 170px);
+}
+.projects-page .section-header h1 {
+  font-size: clamp(44px, 5.3vw, 84px);
+}
+.about-page .about-main h1 {
+  font-size: clamp(42px, 5.3vw, 84px);
+}
+.nav-link[aria-current='page']::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.nav-link {
+  transition: color var(--duration-ink) ease;
+}
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--accent);
+}
+main:focus {
+  outline: none;
+}
+.route-pending {
+  min-height: 70svh;
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+.demo-pending {
+  min-height: 420px;
+  display: flex;
+  padding: 50px;
+  background: var(--rule);
+  gap: 36px;
+  align-items: center;
+}
+.pending-line {
+  display: block;
+  width: 90px;
+  height: 1px;
+  background: var(--accent);
+  transform-origin: left;
+  animation: pending-ink 1.4s var(--ease) infinite alternate;
+}
+@keyframes pending-ink {
+  from {
+    transform: scaleX(0.15);
+    opacity: 0.5;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+@media (max-width: 700px) {
+  :root {
+    --distance-page: 14px;
+  }
+  .projects-page .selected-work,
+  .about-page .about-section {
+    padding-top: 72px;
+  }
+  .projects-page .section-header h1 {
+    font-size: 45px;
+  }
+  .about-page .about-main h1 {
+    font-size: 40px;
+  }
+  .demo-pending {
+    min-height: 300px;
+    padding: 24px;
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+html[data-native-transitions='false'][data-initial='false'] .route-stage {
+  animation: page-arrive var(--duration-page) var(--ease) both;
+}

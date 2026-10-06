@@ -1,33 +1,33 @@
-# Verification
+# Production verification
 
-Verified on 6 October 2026 against production builds, not only source code.
+The quality gate runs against the Vite production artifact, with the same suite reusable against the private published Site.
 
-## Experience
+## Checks
 
-Personally inspected the full home experience in the browser at 1920, 1366, 768, 390, and 320 CSS pixels. Reviewed all three case studies, exercised retrieval and source disclosure, workflow completion, reader controls, the colophon, and the designed 404. Refined mobile typography, project composition, line lengths, navigation, illustration overlaps, and page endings.
+- Strict TypeScript, including unchecked indexing and unused declarations.
+- Oxlint with zero warnings, Oxfmt, and Knip with no ignored dependencies.
+- A Vite build plus generated route/social documents, manifest, sitemap, and robots.
+- Responsive home checks at 1920, 1366, 768, 390, and 320 CSS pixels.
+- Narrow case-study, project listing, about, and colophon geometry and WCAG AA checks.
+- Keyboard skip navigation and visible focus.
+- Native transitions that finish and cease entirely under reduced motion.
+- Every registered route loaded directly and refreshed.
+- Client navigation within one document, native back/forward, and scroll restoration.
+- Project switching, hash links, compatibility redirects, and deliberate 404 content.
+- All three working demos, source disclosure, unsupported query handling, workflow control, and persistent reader settings.
+- Internal hrefs, fonts/icons/social assets, metadata, and one canonical per route.
+- A separate production artifact at `/portfolio/`, including direct loading, refreshing, links, history, and font URLs.
 
-## Automated checks
+Personally inspected the complete home experience, case studies, page endings, listing, About, colophon, and 404. Production browser checks capture JavaScript errors; hosted checks use the owner's existing API access token only in a test process, never in the app or a stored file.
 
-- Both `pnpm build` (Sites/Vinext) and `pnpm build:next` (standard Next) succeed.
-- Strict TypeScript, ESLint, and Prettier checks pass.
-- 15 production browser tests cover five home viewports, narrow detail routes, WCAG AA checks with axe, keyboard focus and the skip link, reduced motion, all three demos, preference persistence, internal links, assets, metadata, and the 404.
-- Production pages have no JavaScript page errors. Development HMR errors during framework restarts were resolved; the production experience was verified separately.
-- Fonts are self-hosted with SIL licenses. Home font transfer is approximately 49 kB. The paper texture is a 6.6 kB WebP. Project/social graphics are original, optimized, and committed.
-- Motion uses native scrolling, transforms/opacity, and Motion's mini entry point. Canvas interpolation stops at rest and caps resolution at 2×. Reduced-motion preferences disable entrances and smooth scrolling.
+## Hosted routing evidence
 
-## Performance
+Before migration, the existing deployment returned HTTP 404 for `/projects` and `/about`, and 200 for `/work/thread`. The replacement declares both missing routes and uses Sites' supported static SPA fallback. Known routes have static HTML metadata documents; history matching belongs to TanStack Router.
 
-Lighthouse 13.5, default mobile simulation, local production server, headless Chromium:
+Private access is preserved. Standard visits require ChatGPT sign-in. Unknown SPA paths may return HTTP 200 while displaying the noindex 404, which is a static-host limitation rather than a client-router status code.
 
-| Build                     | Performance | Accessibility | Best practices | SEO | FCP   | LCP   | TBT   | CLS |
-| ------------------------- | ----------- | ------------- | -------------- | --- | ----- | ----- | ----- | --- |
-| Standard Next             | 99          | 100           | 100            | 100 | 0.8 s | 2.0 s | 30 ms | 0   |
-| Sites/Vinext local server | 83          | 100           | 100            | 100 | 2.8 s | 3.9 s | 0 ms  | 0   |
+## Performance boundaries
 
-The local Vinext server serves text assets without compression; its simulated mobile loading cost is dominated by framework JavaScript and blocking CSS transfer. Standard Next enables compression and optimized delivery. The Vercel configuration uses that verified conventional Next build. Cloudflare edge delivery should be measured on the final public domain rather than assuming a localhost score applies. These are lab measurements, not field INP or real-user Core Web Vitals.
+The application uses automatic route splitting and lazy demo chunks, self-hosted font preloads, a small WebP texture, and original optimized imagery. The main runtime bundle is approximately 94 kB gzip; route and demo chunks are small. Canvas has no idle loop, caps resolution at 2×, and cancels on reduced-motion changes.
 
-Optimizations made after the initial audit: reduced the paper texture from 39 kB PNG to 6.6 kB WebP; replaced the variable serif payload with small static roman/italic subsets; moved the opening reveal into CSS so it begins with the document; removed conflicting accessible link names; and preserved visible content before hydration.
-
-## Content boundaries
-
-KR and India/IST are provisional identity assumptions. Thread, Relay, and Fieldnotes are clearly labeled independent concepts with working local prototypes. No external language model or agent runs. Contact/social/résumé destinations are intentionally unset and documented for replacement. No invented professional history or impact metrics are published.
+Performance measurements should distinguish the actual edge delivery from Vite's local preview, which can serve uncompressed text. Lab results are not field INP or real-user Core Web Vitals. Hosted performance and transition behavior are audited against the deployed artifact.

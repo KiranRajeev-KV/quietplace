@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "printWidth": 100,
+  "trailingComma": "all",
+  "ignorePatterns": [
+    "dist/**",
+    "node_modules/**",
+    "src/routeTree.gen.ts",
+    "pnpm-lock.yaml",
+    "public/**",
+    "playwright-report/**",
+    "test-results/**",
+    ".sites-runtime/**"
+  ]
+}

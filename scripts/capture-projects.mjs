@@ -10,9 +10,7 @@ try {
   });
   await mkdir('public/projects', { recursive: true });
   for (const slug of ['thread', 'relay', 'fieldnotes']) {
-    await page.goto(
-      `${process.env.TEST_URL ?? 'http://localhost:3000'}/work/${slug}`,
-    );
+    await page.goto(`${process.env.TEST_URL ?? 'http://localhost:3000'}/projects/${slug}`);
     await page.evaluate(() => document.fonts.ready);
     const buffer = await page.locator('.case-art .project-art').screenshot();
     await sharp(buffer)

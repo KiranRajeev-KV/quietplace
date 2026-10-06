@@ -1,0 +1,40 @@
+@font-face {
+  font-family: Manrope;
+  src: url('/fonts/manrope-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: Newsreader;
+  src: url('/fonts/newsreader-italic-latin.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+@theme {
+  --color-paper: #f4f2eb;
+  --color-ink: #292c27;
+  --color-muted: #62665b;
+  --color-accent: #984c34;
+  --color-rule: #d6d6cb;
+  --font-sans: Manrope, Arial, sans-serif;
+  --font-serif: Newsreader, Georgia, serif;
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root {
+  --paper: var(--color-paper);
+  --ink: var(--color-ink);
+  --muted: var(--color-muted);
+  --accent: var(--color-accent);
+  --rule: var(--color-rule);
+  --sans: var(--font-sans);
+  --serif: var(--font-serif);
+  --ease: var(--ease-editorial);
+  --margin: clamp(24px, 5vw, 100px);
+  --duration-ink: 180ms;
+  --duration-hover: 320ms;
+  --duration-page: 560ms;
+  --duration-art: 720ms;
+  --distance-page: 24px;
+}
