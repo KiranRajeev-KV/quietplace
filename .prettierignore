@@ -1,0 +1,9 @@
+node_modules
+.next
+.vinext
+.wrangler
+dist
+pnpm-lock.yaml
+public/fonts
+playwright-report
+test-results
