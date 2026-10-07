@@ -1,4 +1,4 @@
-# Motion: a sheet, an image, a line of ink
+# quietplace — a sheet, an image, a line of ink
 
 Navigation changes the composition while preserving its materials. The header stays in place; the next page settles as a sheet; project artwork and titles keep their identity across views. Native scrolling and the normal cursor remain.
 

@@ -15,7 +15,7 @@ test('publication layout stability, route isolation and responsive typesetting',
   const headers = { 'X-Writing-Request': '1' };
   const records: string[] = [];
   let articleSlug = '';
-  await mkdir('/tmp/quiet-writing-review', { recursive: true });
+  await mkdir('/tmp/quietplace-writing-review', { recursive: true });
   try {
     for (const kind of ['note', 'weeknote', 'essay', 'technical'] as const) {
       const manuscript = sampleManuscript(kind);
@@ -114,7 +114,7 @@ test('publication layout stability, route isolation and responsive typesetting',
           }),
         );
         await page.screenshot({
-          path: `/tmp/quiet-writing-review/${width}-${route === '/writing' ? 'archive' : 'article'}.png`,
+          path: `/tmp/quietplace-writing-review/${width}-${route === '/writing' ? 'archive' : 'article'}.png`,
           fullPage: route === '/writing',
         });
         expect(samples.cls).toBeLessThan(0.1);

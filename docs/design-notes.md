@@ -1,6 +1,8 @@
-# Betweenleaf — design notes
+# quietplace — design notes
 
 ## Concept
+
+An experiment in editorial minimalism, built with T3 Code. The portfolio identity is example content; the aim is to explore composition, interaction, and the development workflow through a functioning application.
 
 The identity remains a practice in thoughtful technology: warm paper, charcoal ink, a restrained rust accent, Manrope paired with Newsreader, and a woven field that responds and settles. Japanese restraint informs the negative space and precision without literal symbols or decorative cultural shorthand.
 

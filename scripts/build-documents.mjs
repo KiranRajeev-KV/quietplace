@@ -3,7 +3,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { loadEnv } from 'vite';
 import { metadataFor } from '../src/lib/metadata.ts';
 import { projects } from '../src/content/projects.ts';
-import { defaultSiteUrl } from '../src/content/site.ts';
+import { defaultSiteUrl, siteName, siteDescription } from '../src/content/site.ts';
 const env = { ...loadEnv('production', process.cwd(), 'VITE_'), ...process.env };
 const base = env.VITE_BASE_PATH || '/';
 const origin = env.VITE_SITE_URL || defaultSiteUrl;
@@ -61,9 +61,9 @@ for (const path of [...paths, '/404']) {
 await writeFile(
   `${output}/manifest.webmanifest`,
   JSON.stringify({
-    name: 'KR — Quiet systems',
-    short_name: 'KR',
-    description: 'Thoughtful interfaces. Intelligent systems.',
+    name: siteName,
+    short_name: siteName,
+    description: siteDescription,
     start_url: base,
     scope: base,
     display: 'standalone',

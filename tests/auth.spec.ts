@@ -19,9 +19,9 @@ const headers = { 'X-Writing-Request': '1', 'Content-Type': 'application/json' }
 
 async function session(token: string, secret = password) {
   const cookie = await generateSignedCookie(
-    '__Host-betweenleaf-session',
+    '__Host-quietplace-session',
     token,
-    `betweenleaf:studio:${password}`,
+    `quietplace:studio:${password}`,
     { secure: true, path: '/', httpOnly: true },
   );
   const response = await app.request(
@@ -46,7 +46,7 @@ test('signed sessions enforce expiry, signature, passphrase rotation and deploym
     'https://example.com/api/session',
     {
       headers: {
-        Cookie: `__Host-betweenleaf-session=${valid}.forged`,
+        Cookie: `__Host-quietplace-session=${valid}.forged`,
         'oai-authenticated-user-id': 'forged',
         'oai-authenticated-user-email': 'forged@example.com',
       },
@@ -128,7 +128,7 @@ test('login fails closed, rejects cross-origin requests and rate-limits attempts
   expect(signedIn.status).toBe(200);
   const cookie = signedIn.headers.get('set-cookie') ?? '';
   for (const attribute of [
-    '__Host-betweenleaf-session',
+    '__Host-quietplace-session',
     'HttpOnly',
     'Secure',
     'SameSite=Strict',

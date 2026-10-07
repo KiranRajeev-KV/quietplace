@@ -1,8 +1,8 @@
 {
-  "name": "betweenleaf",
+  "name": "quietplace",
   "version": "0.1.0",
   "private": true,
-  "description": "A quiet home for work and writing.",
+  "description": "An experiment in editorial minimalism, built with T3 Code.",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -21,6 +21,7 @@
     "assets:fonts": "node scripts/prepare-assets.mjs",
     "assets:projects": "node scripts/capture-projects.mjs",
     "assets:readme": "node scripts/capture-readme.mjs",
+    "assets:identity": "node scripts/prepare-identity.mjs",
     "test:base-path": "node scripts/verify-base-path.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply DB --local --persist-to .wrangler/state",

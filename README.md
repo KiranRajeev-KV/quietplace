@@ -1,14 +1,14 @@
-# Betweenleaf
+# quietplace
 
-**A quiet home for work and writing.**
+**An experiment in editorial minimalism, built with T3 Code.**
 
-Betweenleaf is an experimental, open-source personal website and publishing application. I built it to explore editorial web design, restrained motion, and what it feels like to write and publish from the same place.
+quietplace is an open-source project I built to try out editorial minimalism and building with [T3 Code](https://github.com/pingdotgg/t3code). I wanted to explore generous whitespace, careful typography, and restrained motion through a working application.
 
-It pairs a public collection of work and writing with a private, single-author Studio. The interface draws on Japanese minimalism: warm paper, generous margins, careful typography, and movement that connects pages without interrupting reading.
+The experiment grew into a public collection of example work and writing, paired with a private, single-author Studio. The interface draws on Japanese minimalism: warm paper, generous margins, and movement that connects pages without interrupting reading. The publishing system gave me a second surface to explore: a quiet writing instrument alongside the public pages.
 
 This is a standalone project, not my personal portfolio. The included project studies are interactive examples, not accounts of client work. There is no live deployment at present.
 
-![Betweenleaf desktop homepage: oversized editorial typography, warm paper, and a woven line illustration](docs/images/home.webp)
+![quietplace desktop homepage: oversized editorial typography, warm paper, and a woven line illustration](docs/images/home.webp)
 
 ## What it does
 
@@ -41,7 +41,7 @@ Language labels, filenames, syntax highlighting, and code copying are part of th
 
 The homepage keeps its editorial composition on a narrow screen.
 
-<img src="docs/images/mobile.webp" alt="Betweenleaf homepage at 390 pixels wide, with visible navigation and the woven illustration below the introduction" width="320" />
+<img src="docs/images/mobile.webp" alt="quietplace homepage at 390 pixels wide, with visible navigation and the woven illustration below the introduction" width="320" />
 
 </details>
 
@@ -97,15 +97,15 @@ Deployment is entirely optional. These instructions create resources in **your o
 
 ```sh
 pnpm exec wrangler login
-pnpm exec wrangler d1 create betweenleaf
-pnpm exec wrangler r2 bucket create betweenleaf-media
+pnpm exec wrangler d1 create quietplace
+pnpm exec wrangler r2 bucket create quietplace-media
 ```
 
 In `wrangler.jsonc`, add the returned D1 `database_id` to the `DB` entry. Keep the binding names `DB` and `FILES`; update resource names if you chose different ones. The default rate-limiter namespace is `1001`; choose another positive integer string if that namespace is already used in your account.
 
 ### 2. Set the origin
 
-Choose your Worker URL, such as `https://betweenleaf.YOUR-WORKERS-SUBDOMAIN.workers.dev`, or configure a custom domain. Set the same origin in both places:
+Choose your Worker URL, such as `https://quietplace.YOUR-WORKERS-SUBDOMAIN.workers.dev`, or configure a custom domain. Set the same origin in both places:
 
 - `wrangler.jsonc` → `vars.SITE_URL`.
 - `.env` → `VITE_SITE_URL`.
@@ -164,7 +164,7 @@ Useful starting points:
 | `db/schema.ts`, `drizzle/`        | Database schema and migrations                                      |
 | `src/styles`, `src/lib/motion.ts` | Typography, design tokens, and motion                               |
 
-The sample site retains a fictionalized KR identity and original interface studies. Replace those, the favicon/social artwork, and metadata when making your own site. The design and writing systems can also be studied independently without deploying anything.
+The sample portfolio retains a fictionalized KR identity and original interface studies; quietplace is the project and Studio identity. Replace the sample content and metadata when making your own site. Icons and social artwork can be regenerated with `pnpm assets:identity`. The design and writing systems can also be studied independently without deploying anything.
 
 Architecture, motion, and research notes are in [`docs/`](docs/). The project is experimental, and test results describe the tested artifact rather than a promise of production support or fixed performance scores.
 

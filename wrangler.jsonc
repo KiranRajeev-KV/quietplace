@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "betweenleaf",
+  "name": "quietplace",
   "main": "src/server/index.ts",
   "compatibility_date": "2026-10-06",
   "compatibility_flags": ["nodejs_compat"],
@@ -9,10 +9,8 @@
     "not_found_handling": "single-page-application",
     "run_worker_first": true,
   },
-  "d1_databases": [
-    { "binding": "DB", "database_name": "betweenleaf", "migrations_dir": "drizzle" },
-  ],
-  "r2_buckets": [{ "binding": "FILES", "bucket_name": "betweenleaf-media" }],
+  "d1_databases": [{ "binding": "DB", "database_name": "quietplace", "migrations_dir": "drizzle" }],
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "quietplace-media" }],
   "ratelimits": [
     { "name": "AUTH_LIMITER", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } },
   ],

@@ -1,5 +1,5 @@
 import type { Publication } from '../domain/model';
-import { defaultSiteUrl } from '@/content/site';
+import { defaultSiteUrl, siteName } from '@/content/site';
 export function articleMetadata(
   piece: Publication,
   origin = import.meta.env.VITE_SITE_URL ?? defaultSiteUrl,
@@ -8,7 +8,7 @@ export function articleMetadata(
   const url = new URL(`${base}writing/${piece.slug}`, origin).href;
   const mediaId = piece.coverId || piece.content.find((node) => node.type === 'img')?.mediaId;
   return {
-    title: `${piece.seoTitle || piece.title} — KR`,
+    title: `${piece.seoTitle || piece.title} — ${siteName}`,
     description: piece.seoDescription || piece.description,
     url,
     image:
@@ -43,7 +43,7 @@ export function articleHead(piece: Publication) {
       {
         rel: 'alternate',
         type: 'application/rss+xml',
-        title: 'KR — Writing',
+        title: `${siteName} — Writing`,
         href: `${import.meta.env.BASE_URL}writing/feed.xml`,
       },
     ],

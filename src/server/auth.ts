@@ -5,6 +5,7 @@ import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie';
 import { z } from 'zod';
 import type { Env } from './env';
 import type { AuthorSession } from '../features/writing/domain/model';
+import { siteName } from '../content/site';
 
 type AuthEnv = Pick<Env, 'STUDIO_PASSWORD' | 'AUTH_LIMITER'>;
 
@@ -15,7 +16,7 @@ function cookieOptions<E extends AuthEnv>(c: Context<{ Bindings: E }>) {
   const url = new URL(c.req.url);
   const local = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
   return {
-    name: url.protocol === 'https:' ? '__Host-betweenleaf-session' : 'betweenleaf-session',
+    name: url.protocol === 'https:' ? `__Host-${siteName}-session` : `${siteName}-session`,
     secure: url.protocol === 'https:',
     local,
     path: '/' as const,
@@ -43,7 +44,7 @@ export async function authorSession<E extends AuthEnv>(
   const password = configuredPassword(c);
   const anonymous = { authenticated: false, authorized: false, displayName: null };
   if (!password) return anonymous;
-  const token = await getSignedCookie(c, `betweenleaf:studio:${password}`, cookieOptions(c).name);
+  const token = await getSignedCookie(c, `${siteName}:studio:${password}`, cookieOptions(c).name);
   if (!token || !/^\d{13}\.[\da-f-]{36}$/.test(token)) return anonymous;
   const expiry = Number(token.split('.')[0]);
   const now = Date.now();
@@ -97,7 +98,7 @@ authRoutes.post('/login', async (c) => {
     c,
     options.name,
     `${Date.now() + lifetime * 1000}.${crypto.randomUUID()}`,
-    `betweenleaf:studio:${password}`,
+    `${siteName}:studio:${password}`,
     { ...options, maxAge: lifetime },
   );
   return c.json({ authenticated: true, authorized: true, displayName: 'Author' });

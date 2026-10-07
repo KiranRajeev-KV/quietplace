@@ -1,4 +1,4 @@
-# A notebook and a press
+# quietplace — a notebook and a press
 
 Writing is one domain, from a small observation to a technical essay. The public archive is chronological and typographic; the private Studio is a manuscript index and a quiet writing desk. Newsreader carries sustained reading, Manrope carries navigation, and IBM Plex Mono carries code. No article-card grid, analytics dashboard, or animated paragraphs.
 

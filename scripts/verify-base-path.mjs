@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
 import { signIn } from '../tests/auth-helper.ts';
-const directory = await mkdtemp(join(tmpdir(), 'quiet-systems-base-'));
+const directory = await mkdtemp(join(tmpdir(), 'quietplace-base-'));
 const previous = process.env.VITE_BASE_PATH;
 const deployConfig = '.wrangler/deploy/config.json';
 const originalDeployConfig = await readFile(deployConfig);

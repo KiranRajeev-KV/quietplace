@@ -5,7 +5,7 @@ export function Colophon() {
     <>
       <div className="colophon wrap">
         <span className="micro section-index" data-intro="0">
-          A NOTE ON THIS PORTFOLIO
+          A NOTE ON QUIETPLACE
         </span>
         <h1 data-intro="1">
           Built with
@@ -16,16 +16,19 @@ export function Colophon() {
           <section>
             <h2>A quiet practice</h2>
             <p>
-              This is a small space for work at the intersection of software engineering, AI, and
-              design. Its composition takes cues from editorial design: generous margins, a clear
-              rhythm, and details that invite a closer look.
+              quietplace began as an experiment in editorial minimalism and building with{' '}
+              <a href="https://github.com/pingdotgg/t3code" target="_blank" rel="noreferrer">
+                T3 Code
+              </a>
+              . A working space for example work and writing became a way to explore generous
+              margins, a clear rhythm, and details that invite a closer look.
             </p>
           </section>
           <section>
             <h2>The work shown here</h2>
             <p>
               Thread, Relay, and Fieldnotes are independent interface studies, made for this
-              portfolio. Their case studies include working local prototypes. They are explorations
+              experiment. Their case studies include working local prototypes. They are explorations
               of ideas, rather than accounts of client engagements.
             </p>
           </section>
@@ -61,7 +64,7 @@ export function Colophon() {
             </Link>
           </section>
           <div className="colophon-end micro">
-            LESS, BUT CONSIDERED.<span>KR — 2026</span>
+            LESS, BUT CONSIDERED.<span>QUIETPLACE — 2026</span>
           </div>
         </div>
       </div>

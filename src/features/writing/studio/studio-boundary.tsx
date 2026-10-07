@@ -3,6 +3,7 @@ import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-q
 import { Link, Outlet, useRouter } from '@tanstack/react-router';
 import { sessionQuery, writingKeys } from '../data/queries';
 import { writingRepository } from '../data/repository';
+import { siteName } from '@/content/site';
 
 export function StudioBoundary() {
   const { data: session } = useSuspenseQuery(sessionQuery());
@@ -32,8 +33,8 @@ export function StudioBoundary() {
   if (!session.authorized)
     return (
       <section className="studio-entrance wrap">
-        <Link to="/" className="studio-wordmark" aria-label="Betweenleaf, home">
-          bl
+        <Link to="/" className="studio-wordmark" aria-label={`${siteName}, home`}>
+          qp
           <span className="ink-dot" />
         </Link>
         <p className="micro">A PRIVATE WRITING DESK</p>
@@ -75,7 +76,7 @@ export function StudioBoundary() {
     <>
       <header className="studio-header wrap">
         <Link to="/studio" className="studio-wordmark" aria-label="Writing desk">
-          bl
+          qp
           <span className="ink-dot" />
         </Link>
         <span className="micro">THE PRIVATE NOTEBOOK</span>

@@ -1,4 +1,6 @@
-# Production architecture
+# quietplace — architecture
+
+quietplace began as an experiment in editorial minimalism and building with T3 Code. Its interface pairs example work and public writing with a private writing instrument; the architecture keeps those surfaces independent and maintainable.
 
 React + Vite + strict TypeScript + file-based TanStack Router remain the foundation. Tailwind supplies tokens/utilities while custom CSS owns the editorial composition. TanStack Query now has a real role: remote manuscripts, sessions, publication snapshots, mutations and invalidation. Plate is confined to the Writing domain and lazily loaded article/editor routes.
 
