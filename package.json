@@ -20,6 +20,7 @@
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm knip && pnpm build && pnpm test && pnpm test:base-path",
     "assets:fonts": "node scripts/prepare-assets.mjs",
     "assets:projects": "node scripts/capture-projects.mjs",
+    "assets:readme": "node scripts/capture-readme.mjs",
     "test:base-path": "node scripts/verify-base-path.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply DB --local --persist-to .wrangler/state",

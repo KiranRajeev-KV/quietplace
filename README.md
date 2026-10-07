@@ -8,6 +8,8 @@ It pairs a public collection of work and writing with a private, single-author S
 
 This is a standalone project, not my personal portfolio. The included project studies are interactive examples, not accounts of client work. There is no live deployment at present.
 
+![Betweenleaf desktop homepage: oversized editorial typography, warm paper, and a woven line illustration](docs/images/home.webp)
+
 ## What it does
 
 - Presents selected work through editorial case studies and three browser-local demonstrations.
@@ -20,6 +22,28 @@ This is a standalone project, not my personal portfolio. The included project st
 - Connects routes with native View Transitions, with reduced-motion support and ordinary browser history.
 
 The writing database starts empty. Optional development specimens are clearly marked and cannot be published. Browser tests create and remove temporary writing locally.
+
+## A closer look
+
+The private Studio and article preview share the same typography and materials. These captures use a private development specimen, not published writing.
+
+| The writing desk                                                                                                                                                      | The reading preview                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [![Plate editor with a saved manuscript, restrained formatting controls, and publishing disabled for the specimen](docs/images/studio.webp)](docs/images/studio.webp) | [![Article preview with a large title, serif reading typography, and a quiet contents margin](docs/images/reading.webp)](docs/images/reading.webp) |
+| Autosave and formatting stay at the edge of the page.                                                                                                                 | Preview uses the same renderer as public articles.                                                                                                 |
+
+<details>
+<summary>Technical writing and the mobile layout</summary>
+
+Language labels, filenames, syntax highlighting, and code copying are part of the reading surface.
+
+![Technical article preview showing syntax-highlighted SQL and TypeScript with filenames and copy controls](docs/images/technical-writing.webp)
+
+The homepage keeps its editorial composition on a narrow screen.
+
+<img src="docs/images/mobile.webp" alt="Betweenleaf homepage at 390 pixels wide, with visible navigation and the woven illustration below the introduction" width="320" />
+
+</details>
 
 ## Stack
 
@@ -143,6 +167,8 @@ Useful starting points:
 The sample site retains a fictionalized KR identity and original interface studies. Replace those, the favicon/social artwork, and metadata when making your own site. The design and writing systems can also be studied independently without deploying anything.
 
 Architecture, motion, and research notes are in [`docs/`](docs/). The project is experimental, and test results describe the tested artifact rather than a promise of production support or fixed performance scores.
+
+To refresh the README screenshots, start `pnpm dev` in one terminal and run `pnpm assets:readme` in another. The capture script only targets localhost, creates a private specimen, and deletes it afterwards. It never publishes writing. Screenshots are compressed WebP files stored in `docs/images`, separate from the application's production assets.
 
 ## License
 
