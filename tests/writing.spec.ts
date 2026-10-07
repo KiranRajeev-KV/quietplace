@@ -3,16 +3,12 @@ import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
 import { newManuscript, toManuscript, type Writing } from '../src/features/writing/domain/model';
 import { sampleManuscript } from '../src/features/writing/studio/samples';
+import { signIn } from './auth-helper';
 const headers = { 'X-Writing-Request': '1' };
 let cleanup: string[] = [];
 test.beforeEach(async ({ page }) => {
   await signIn(page.request);
 });
-async function signIn(api: APIRequestContext) {
-  await api.get('/signin-with-chatgpt?return_to=/studio');
-  expect((await api.get('/api/session')).status()).toBe(200);
-  expect((await (await api.get('/api/session')).json()).authorized).toBe(true);
-}
 async function create(
   api: APIRequestContext,
   sample = false,
@@ -63,7 +59,7 @@ test('Studio data rejects anonymous access and forged identity headers', async (
       await request.get('/api/studio/writing', {
         headers: {
           'oai-authenticated-user-id': 'forged',
-          'oai-authenticated-user-email': 'seedy@sites.test',
+          'oai-authenticated-user-email': 'forged@example.com',
         },
       })
     ).status(),

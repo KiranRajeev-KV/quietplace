@@ -4,6 +4,7 @@ import { mkdtemp, rm, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
+import { signIn } from '../tests/auth-helper.ts';
 const directory = await mkdtemp(join(tmpdir(), 'quiet-systems-base-'));
 const previous = process.env.VITE_BASE_PATH;
 const deployConfig = '.wrangler/deploy/config.json';
@@ -65,7 +66,7 @@ try {
     performance.getEntriesByType('resource').map((resource) => resource.name),
   );
   assert.ok(resources.some((url) => url.includes('/portfolio/fonts/manrope-latin.woff2')));
-  await api.get(`${origin}/signin-with-chatgpt?return_to=/portfolio/studio`);
+  await signIn(api, `${origin}/portfolio`);
   const headers = { 'X-Writing-Request': '1' };
   const slug = `base-${crypto.randomUUID()}`;
   const created = await api.post(`${origin}/portfolio/api/studio/writing`, {

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "quiet-writing",
+  "name": "betweenleaf",
   "main": "src/server/index.ts",
   "compatibility_date": "2026-10-06",
   "compatibility_flags": ["nodejs_compat"],
@@ -10,8 +10,11 @@
     "run_worker_first": true,
   },
   "d1_databases": [
-    { "binding": "DB", "database_name": "quiet-writing", "migrations_dir": "drizzle" },
+    { "binding": "DB", "database_name": "betweenleaf", "migrations_dir": "drizzle" },
   ],
-  "r2_buckets": [{ "binding": "FILES", "bucket_name": "quiet-writing-media" }],
-  "vars": { "SITE_URL": "https://kr-quiet-systems.kiranrajeevkv.chatgpt.site", "BASE_PATH": "/" },
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "betweenleaf-media" }],
+  "ratelimits": [
+    { "name": "AUTH_LIMITER", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } },
+  ],
+  "vars": { "SITE_URL": "https://example.com", "BASE_PATH": "/" },
 }

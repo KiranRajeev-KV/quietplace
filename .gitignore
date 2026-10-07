@@ -3,9 +3,7 @@
 /coverage/
 /playwright-report/
 /test-results/
-/.sites-runtime/
 /.tanstack/
-/.vercel/
 .env*
 !.env.example
 *.tsbuildinfo
@@ -15,3 +13,7 @@
 .wrangler/
 .cloudflare/
 .dev.vars
+
+.dev.vars.*
+!.dev.vars.example
+.openai/

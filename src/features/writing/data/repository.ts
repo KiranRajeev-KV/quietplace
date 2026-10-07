@@ -40,6 +40,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 export const writingRepository = {
   session: () => request<AuthorSession>('api/session'),
+  signIn: (password: string) =>
+    request<AuthorSession>('api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    }),
+  signOut: () => request<AuthorSession>('api/auth/logout', { method: 'POST' }),
   published: () => request<WritingSummary[]>('api/writing'),
   article: (slug: string) => request<Publication>(`api/writing/${encodeURIComponent(slug)}`),
   manuscripts: () => request<Writing[]>('api/studio/writing'),

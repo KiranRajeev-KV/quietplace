@@ -3,7 +3,7 @@ import { bodyLimit } from 'hono/body-limit';
 import { imageSize } from 'image-size';
 import { z } from 'zod';
 import type { Env } from './env';
-import { authorSession, sameOriginMutation } from './auth';
+import { authorSession, authRoutes, sameOriginMutation } from './auth';
 import { WritingRepository, RepositoryError } from './writing-repository';
 import { mediaIds, summaryOf } from '../features/writing/domain/model';
 import { manuscriptSchema } from '../features/writing/domain/validation';
@@ -21,9 +21,10 @@ app.use(
     onError: (c) => c.json({ error: 'This file or document is too large.' }, 413),
   }),
 );
+app.route('/api/auth', authRoutes);
 app.use('/api/studio/*', async (c, next) => {
   c.header('Cache-Control', 'private, no-store');
-  const session = authorSession(c.req.raw, c.env);
+  const session = await authorSession(c);
   if (!session.authorized)
     return c.json(
       {
@@ -37,9 +38,9 @@ app.use('/api/studio/*', async (c, next) => {
     return c.json({ error: 'This request must come from your writing desk.' }, 403);
   await next();
 });
-app.get('/api/session', (c) => {
+app.get('/api/session', async (c) => {
   c.header('Cache-Control', 'private, no-store');
-  return c.json(authorSession(c.req.raw, c.env));
+  return c.json(await authorSession(c));
 });
 app.get('/api/writing', async (c) => {
   c.header('Cache-Control', 'no-store');
@@ -177,7 +178,7 @@ app.get('/media/:id', async (c) => {
   )
     .bind(id)
     .first();
-  if (!published && !authorSession(c.req.raw, c.env).authorized) return c.notFound();
+  if (!published && !(await authorSession(c)).authorized) return c.notFound();
   const object = await c.env.FILES.get(row.key);
   if (!object) return c.notFound();
   // Re-check publication on each request: unpublishing must revoke public media.
@@ -245,8 +246,7 @@ export default {
       request.method === 'GET' &&
       request.headers.get('accept')?.includes('text/html')
     ) {
-      // Sites' ASSETS binding does not inherit Wrangler's SPA fallback. Serve
-      // the application shell explicitly for history routes, including legacy
+      // Serve the application shell explicitly for missing history routes, including legacy
       // redirects and the Router's accessible 404. Missing files stay 404.
       const shell = await env.ASSETS.fetch(new Request(new URL('/', request.url), request));
       const headers = new Headers(shell.headers);

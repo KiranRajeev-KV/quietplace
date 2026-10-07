@@ -1,7 +1,9 @@
 {
-  "name": "quiet-systems-portfolio",
-  "version": "1.0.0",
+  "name": "betweenleaf",
+  "version": "0.1.0",
   "private": true,
+  "description": "A quiet home for work and writing.",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -18,10 +20,10 @@
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm knip && pnpm build && pnpm test && pnpm test:base-path",
     "assets:fonts": "node scripts/prepare-assets.mjs",
     "assets:projects": "node scripts/capture-projects.mjs",
-    "test:hosted": "node scripts/hosted-qa.mjs",
     "test:base-path": "node scripts/verify-base-path.mjs",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "wrangler d1 migrations apply DB --local --persist-to .wrangler/state"
+    "db:migrate": "wrangler d1 migrations apply DB --local --persist-to .wrangler/state",
+    "deploy": "pnpm build && wrangler deploy"
   },
   "dependencies": {
     "@platejs/basic-nodes": "^53.0.0",
@@ -52,7 +54,6 @@
     "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/newsreader": "^5.3.0",
-    "@openai/sites-vite-plugin": "^0.2.0",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/router-cli": "^1.167.40",
@@ -74,5 +75,6 @@
   },
   "engines": {
     "node": ">=22.18.0"
-  }
+  },
+  "packageManager": "pnpm@12.4.2"
 }

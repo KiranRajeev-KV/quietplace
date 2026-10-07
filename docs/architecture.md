@@ -15,19 +15,21 @@ The manuscript is the only editable representation. A publication is an immutabl
 
 ## Delivery and routing
 
-Cloudflare's maintained Vite plugin builds `dist/client` and `dist/server`. Sites provisions logical `DB` and `FILES` bindings. Every application link uses TanStack Router; external links, RSS, sign-in/out and download destinations remain ordinary links. Browser history and scroll restoration use history-entry keys. Native View Transitions connect pages; CSS supplies a restrained fallback.
+Cloudflare's maintained Vite plugin builds `dist/client` and `dist/server`. Wrangler binds provisioned D1/R2 resources as `DB` and `FILES`. Every application link uses TanStack Router; external links, RSS, and download destinations remain ordinary links. Sign-in and sign-out use same-origin API mutations. Browser history and scroll restoration use history-entry keys. Native View Transitions connect pages; CSS supplies a restrained fallback.
 
 The Worker renders Writing with the actual Router shell, static Plate renderer and article components. It seeds public Query data into escaped JSON. The browser waits for its lazy route before committing the identical geometry; it does not claim experimental hydration support. Article HTML, metadata and readable content are available without JavaScript. Missing/draft articles return HTTP 404. Known portfolio route metadata remains prebuilt; interactive portfolio content remains client-rendered. Dynamic RSS and sitemap only use published editions.
 
-Sites dispatch serves matching static assets before invoking the Worker. Consequently, robots and sitemap have no static copies: both belong exclusively to the Worker so new publications appear immediately and Studio stays excluded.
+Robots and sitemap belong exclusively to the Worker, with no static copies that could shadow live responses. New publications appear immediately and Studio stays excluded.
 
-The hosted ASSETS binding also does not inherit Wrangler's SPA fallback. The Worker explicitly serves the app shell for missing HTML history routes, allowing legacy redirects and the Router's 404 to run. Missing asset requests retain their 404; known portfolio routes keep their prebuilt heads.
+The Worker explicitly serves the app shell for missing HTML history routes, allowing legacy redirects and the Router's 404 to run. Missing asset requests retain their 404; known portfolio routes keep their prebuilt heads.
 
-`VITE_BASE_PATH` controls Vite, Router, links and assets. The Vite plugin configures matching Worker `BASE_PATH`; Sites runtime configuration must agree. A separate production test verifies `/portfolio/` without modifying the main artifact. Asset fallback preserves nested route refreshes.
+`VITE_BASE_PATH` controls Vite, Router, links and assets. The Vite plugin configures matching Worker `BASE_PATH`. A separate production test verifies `/portfolio/` without modifying the main artifact. Asset fallback preserves nested route refreshes.
 
 ## Authentication and safety
 
-Dispatch-owned ChatGPT sign-in supplies trusted identity headers. The Worker requires a user ID and an explicit server-side author email allowlist for every Studio API operation. Anonymous and other signed-in users cannot access manuscripts or draft media. The Sites local simulator strips forged headers and provides a development identity; it never ships as an auth bypass. Same-origin checks and a non-simple mutation header provide the CSRF boundary. An alternate deployment must verify identity itself and must not trust publicly supplied headers.
+Studio uses one server-side passphrase and Hono's HMAC-signed cookie helpers. Seven-day sessions require a valid signature and expiry; HTTPS cookies use a host prefix, HttpOnly, Secure, and SameSite Strict. Passphrase rotation invalidates all sessions. Same-origin checks and a custom mutation header protect login, logout, and Studio operations. A Cloudflare rate-limiter binding throttles login attempts. The local example passphrase is rejected on non-local origins. Unconfigured authentication fails closed; there is no identity-header trust or development login bypass.
+
+The optional deployment target is a standalone Cloudflare Worker with explicitly provisioned D1/R2. No deployment is currently running.
 
 Revisions increment through conditional updates. Publication and public media membership change in atomic D1 batches. Slugs lock on first publication and remain reserved after deletion. Unpublish/archive remove snapshots and public media membership. The server checks media visibility on each request so revocation takes immediate effect.
 

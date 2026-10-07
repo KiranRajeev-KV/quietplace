@@ -2,29 +2,16 @@ import { fileURLToPath, URL } from 'node:url';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
-import { defineConfig, loadEnv, type ViteDevServer } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { cloudflare } from '@cloudflare/vite-plugin';
-import { sites } from '@openai/sites-vite-plugin';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
   const base = env.VITE_BASE_PATH || '/';
   if (!base.startsWith('/') || !base.endsWith('/'))
     throw new Error('VITE_BASE_PATH must start and end with a slash.');
-  const sitesPlugin = sites();
-  // The official simulator owns identity/header stripping. Reuse the same
-  // middleware for local Workers previews; none of this enters the Worker.
-  sitesPlugin.configurePreviewServer = (server) => {
-    const hook = sitesPlugin.configureServer;
-    if (typeof hook === 'function')
-      return hook.call(
-        {} as never,
-        { config: server.config, middlewares: server.middlewares } as ViteDevServer,
-      );
-  };
   return {
     base,
     plugins: [
-      sitesPlugin,
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),

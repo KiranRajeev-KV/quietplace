@@ -1373,3 +1373,39 @@ progress {
     gap: 12px;
   }
 }
+
+.studio-signin {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 24rem);
+  margin: 2.5rem 0 3rem;
+}
+.studio-signin input {
+  width: 100%;
+  padding: 0.8rem 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+}
+.studio-signin button {
+  justify-self: start;
+  appearance: none;
+  margin-top: 0;
+  padding-inline: 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+.studio-header nav button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}

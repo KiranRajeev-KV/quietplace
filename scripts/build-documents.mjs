@@ -56,8 +56,8 @@ for (const path of [...paths, '/404']) {
   await mkdir(filename.slice(0, filename.lastIndexOf('/')), { recursive: true });
   await writeFile(filename, template.replace('<!-- page-head -->', tags));
 }
-// Discovery documents belong to the Worker. Sites dispatch serves matching
-// assets first, so static copies would shadow the live publication archive.
+// Discovery documents belong to the Worker; static copies could shadow
+// the live publication archive.
 await writeFile(
   `${output}/manifest.webmanifest`,
   JSON.stringify({

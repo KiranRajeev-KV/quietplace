@@ -1,5 +1,6 @@
 // Isolated Chromium lab measurements; no field-vitals or Lighthouse claims.
 import { test, expect } from '@playwright/test';
+import { signIn } from './auth-helper';
 import { mkdir } from 'node:fs/promises';
 import { sampleManuscript } from '../src/features/writing/studio/samples';
 test('publication layout stability, route isolation and responsive typesetting', async ({
@@ -7,14 +8,10 @@ test('publication layout stability, route isolation and responsive typesetting',
   request,
 }, testInfo) => {
   test.setTimeout(60000);
-  test.skip(
-    !!process.env.TEST_URL,
-    'Private specimens are measured locally; hosted QA uses actual publications.',
-  );
   const origin = testInfo.project.use.baseURL;
   const api = request;
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await api.get(`${origin}/signin-with-chatgpt?return_to=/studio`);
+  await signIn(api);
   const headers = { 'X-Writing-Request': '1' };
   const records: string[] = [];
   let articleSlug = '';

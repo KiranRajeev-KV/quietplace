@@ -1,64 +1,149 @@
-# KR — Quiet systems
+# Betweenleaf
 
-A paper-toned editorial portfolio with selected work, an independent Writing publication, and a private Plate writing Studio. Built with React 19, Vite 8, strict TypeScript, file-based TanStack Router, Tailwind 4, and a Cloudflare-compatible Worker. Next.js is absent.
+**A quiet home for work and writing.**
 
-## Run and verify
+Betweenleaf is an experimental, open-source personal website and publishing application. I built it to explore editorial web design, restrained motion, and what it feels like to write and publish from the same place.
 
-Node 22.18+ and pnpm are required.
+It pairs a public collection of work and writing with a private, single-author Studio. The interface draws on Japanese minimalism: warm paper, generous margins, careful typography, and movement that connects pages without interrupting reading.
+
+This is a standalone project, not my personal portfolio. The included project studies are interactive examples, not accounts of client work. There is no live deployment at present.
+
+## What it does
+
+- Presents selected work through editorial case studies and three browser-local demonstrations.
+- Collects notes, weeknotes, essays, technical articles, and build logs in one Writing archive.
+- Provides a custom Plate editor with headings, links, lists, quotations, code, images, captions, Markdown shortcuts, rich-text paste, and Markdown export.
+- Autosaves drafts with revision checks and device-local recovery during connection failures.
+- Previews the actual public article before publishing it.
+- Keeps a published edition separate from unfinished edits; supports republishing, unpublishing, archiving, restoring, and deleting.
+- Serves published article HTML, metadata, RSS, and a sitemap from the Worker.
+- Connects routes with native View Transitions, with reduced-motion support and ordinary browser history.
+
+The writing database starts empty. Optional development specimens are clearly marked and cannot be published. Browser tests create and remove temporary writing locally.
+
+## Stack
+
+React 19, Vite 8, TypeScript, file-based TanStack Router, TanStack Query, Tailwind CSS, and Plate 53. A Hono Worker handles the API, authentication, public article rendering, and feeds. Cloudflare D1 stores documents and media metadata; R2 stores uploaded images.
+
+Oxlint, Oxfmt, Knip, and Playwright provide the quality gate. Fonts are self-hosted Manrope, Newsreader, and IBM Plex Mono.
+
+This is a full-stack application. A static upload to GitHub Pages cannot run the Studio, database, uploads, or dynamic publication routes.
+
+## Run locally
+
+Use Node.js 24 and pnpm 12.4.2, matching CI. Node.js 22.18 or later is also supported by the application. All JavaScript package commands use pnpm.
 
 ```sh
 pnpm install --frozen-lockfile
+cp .env.example .env
+cp .dev.vars.example .dev.vars
 pnpm db:migrate
 pnpm dev
 ```
 
-Development runs at http://localhost:3000. Local ChatGPT sign-in is simulated by the official Sites Vite helper; it never enters the production Worker.
+Open <http://localhost:3000>. Visit `/studio` and use the development passphrase from `.dev.vars.example`. The exact example passphrase is rejected on deployed origins. Local D1 and R2 data stay in the ignored `.wrangler/state` directory; no Cloudflare account is needed for local development.
+
+`.env` configures browser/build URLs. `.dev.vars` contains local Worker configuration and secrets. Both are ignored by Git. Never put a passphrase in a `VITE_` variable: those values are public browser configuration.
+
+## Verify
 
 ```sh
 pnpm exec playwright install chromium
 pnpm check
+```
+
+`check` runs route generation, strict TypeScript, lint, formatting, unused-code checks, the production build, browser tests, and an independent build under `/portfolio/`. Tests cover authentication, publication boundaries, autosave recovery, revisions, media, keyboard use, reduced motion, responsive layouts, direct routes, refresh, and history.
+
+```sh
 pnpm build
 pnpm preview
 ```
 
-Production preview runs at http://localhost:4173. `check` runs route generation, strict TypeScript, Oxlint, Oxfmt, Knip, production builds, browser tests, and a separate `/portfolio/` deployment test. Browser tests cover the portfolio and complete writing workflows, authorization, draft exclusion, concurrency, recovery, media, accessible reading, keyboard use, reduced motion, refresh, and history. Temporary test publications are removed; specimens cannot be published.
+The production preview runs at <http://localhost:4173>. It uses the same local bindings and passphrase. Its metadata uses the configured canonical origin rather than the preview address.
 
-Other commands: `pnpm typecheck`, `pnpm lint`, `pnpm lint:fix`, `pnpm format`, `pnpm format:check`, `pnpm knip`, `pnpm test`, `pnpm test:base-path`, `pnpm db:generate`.
+Individual checks: `pnpm typecheck`, `pnpm lint`, `pnpm format:check`, `pnpm knip`, and `pnpm test`.
 
-## Writing
+GitHub Actions runs the quality gate and production dependency audit on pushes and pull requests. It has read-only repository permissions and no deployment credentials, publishing steps, or release automation.
 
-- `/writing`: chronological publication archive.
-- `/writing/:slug`: readable published edition, rendered on the Worker and in React.
-- `/writing/feed.xml`: RSS for published editions.
-- `/studio`: protected manuscript archive.
-- `/studio/new`: a fresh manuscript.
-- `/studio/:id`: Plate writing desk with autosave.
-- `/studio/:id/preview`: the actual public renderer, privately previewed.
+## Optional deployment to Cloudflare
 
-Plate JSON is the editable authority. Publishing creates a read-only edition. Further edits stay private until republished. First publication permanently locks the slug. Unpublish and archive revoke public text and image access. Permanent deletion erases manuscript content and media while reserving its address. Drafts and private specimens never enter the public repository, server-rendered HTML, feed, or sitemap.
+Deployment is entirely optional. These instructions create resources in **your own Cloudflare account**. Workers, D1, and R2 are separate services; check their current plans and enable R2 before deploying. The repository does not include an existing cloud project or resource credentials.
 
-Autosave debounces typing, serializes requests, and checks revisions. A small IndexedDB recovery copy protects unfinished work during outages; D1 is the durable authority. Navigation flushes pending work or offers a recovery/export path. Images are resized, compressed to WebP, validated on the server, and stored in R2. Alt text is required; captions remain editable.
+### 1. Create storage
 
-## Hosting
+```sh
+pnpm exec wrangler login
+pnpm exec wrangler d1 create betweenleaf
+pnpm exec wrangler r2 bucket create betweenleaf-media
+```
 
-The existing [Sites portfolio](https://kr-quiet-systems.kiranrajeevkv.chatgpt.site) uses Sites-managed D1 (`DB`), R2 (`FILES`), assets, and dispatch-owned ChatGPT authentication. Use the Sites connector to publish this project's validated source and packaged Worker output; it preserves the existing audience. The Site currently has owner-only platform access. Public Writing is an unauthenticated application surface, but anonymous visitors and crawlers still require the platform audience to be public. Studio stays author-only even on a public Site.
+In `wrangler.jsonc`, add the returned D1 `database_id` to the `DB` entry. Keep the binding names `DB` and `FILES`; update resource names if you chose different ones. The default rate-limiter namespace is `1001`; choose another positive integer string if that namespace is already used in your account.
 
-Runtime configuration:
+### 2. Set the origin
 
-- `STUDIO_OWNER_EMAIL`: server-side owner allowlist, configured as a Sites secret; never `VITE_`-prefixed.
-- `SITE_URL`: the trusted canonical origin.
-- `BASE_PATH`: the deployed prefix, normally `/`.
+Choose your Worker URL, such as `https://betweenleaf.YOUR-WORKERS-SUBDOMAIN.workers.dev`, or configure a custom domain. Set the same origin in both places:
 
-`VITE_SITE_URL` and `VITE_BASE_PATH` configure matching browser/build URLs. Prefixes require leading and trailing slashes. The Vite plugin gives the Worker the same base path. Root and nested routes use browser history, native View Transitions, and SPA fallback; Writing receives real article HTML and 404 statuses. RSS, sitemap, JSON-LD, canonical and social metadata derive exclusively from publication snapshots.
+- `wrangler.jsonc` → `vars.SITE_URL`.
+- `.env` → `VITE_SITE_URL`.
 
-This is a full-stack Worker application. A static-only Vercel upload cannot provide Studio persistence or authentication. To move off Sites, provision D1/R2 and replace the trusted dispatch identity adapter with a verified identity provider before using `pnpm exec wrangler deploy`. Never expose a directly reachable Worker that trusts arbitrary identity headers.
+Keep `VITE_BASE_PATH=/` for a normal deployment. If using a prefix, give it leading and trailing slashes, for example `/portfolio/`. Vite configures the matching Worker `BASE_PATH` automatically. The default `example.com` origin must be replaced before deploying.
 
-## Structure and replaceable content
+Keep the local `.dev.vars` file local. Wrangler secrets are configured separately on the deployed Worker; that file is not a production credential bundle.
 
-`src/routes` owns matching and lazy route boundaries. `src/features/writing` contains the domain/schema, remote repository and queries, static publication renderer, Plate instrument, and Studio. `src/server` owns authorization, API, durable queries, media, server-rendered publication documents, and feeds. `db/schema.ts` and `drizzle/` own reviewed migrations. Design and motion tokens remain centralized in `src/styles` and `src/lib/motion.ts`.
+### 3. Build, migrate, and deploy
 
-`src/content/profile.ts` still holds provisional KR, India/IST, role, and optional contact/social/résumé destinations. The three project studies are explicitly independent concepts. No writing is invented and published under the author's name. Four optional private specimens exercise short notes, weeknotes, essays, and technical articles.
+```sh
+pnpm check
+pnpm build
+pnpm exec wrangler d1 migrations apply DB --remote
+pnpm exec wrangler deploy
+```
 
-Fonts are self-hosted Manrope, Newsreader, and IBM Plex Mono with licenses. `pnpm assets:fonts` refreshes them. `pnpm assets:projects` exports original portfolio artwork from a running app.
+Vite produces `dist/client` and `dist/server`. Wrangler discovers the generated Worker configuration automatically after the build; deploy the complete application rather than uploading `dist/client` alone.
 
-Research, architecture, typography, safety, and motion decisions: [docs/writing.md](docs/writing.md), [docs/architecture.md](docs/architecture.md), [docs/motion.md](docs/motion.md), and [docs/verification.md](docs/verification.md).
+### 4. Configure the Studio passphrase
+
+Generate a unique random passphrase in a password manager, at least 32 characters long, and enter it at Wrangler's interactive secret prompt:
+
+```sh
+pnpm exec wrangler secret put STUDIO_PASSWORD
+```
+
+Studio sign-in fails closed until this secret is configured. The example development passphrase does not work remotely. Open `/studio`, sign in, create a private draft, reload it, and preview it before using the installation for real writing.
+
+Later deployments can use `pnpm run deploy`, which builds and uploads the Worker. That command is never run by CI. Apply any new database migrations explicitly before deploying changes that depend on them.
+
+## Authentication
+
+Studio has one author and one server-side passphrase. There are no accounts, email addresses, OAuth providers, or user-management screens to configure.
+
+A successful sign-in creates a seven-day HMAC-signed cookie using Hono's maintained cookie helpers. It is HttpOnly and SameSite Strict, with Secure and a `__Host-` prefix over HTTPS. The server checks signature and expiry on every protected request. Cloudflare's rate-limiter binding limits login attempts; mutations also require a same-origin request and a custom request header.
+
+The passphrase is never stored in browser storage. Changing `STUDIO_PASSWORD` invalidates every existing session. Signing out clears the current browser cookie; an already copied session remains valid until expiry or passphrase rotation. Keep the passphrase strong and the deployed origin HTTPS. Public Writing remains readable without signing in; unpublished manuscripts and draft media remain private.
+
+This intentionally small authentication model is for a personal experiment, not a multi-user publishing service.
+
+## Content and customization
+
+Plate's structured JSON is the only editable content format. HTML, plain text, excerpts, reading time, feeds, and Markdown exports are derived. Publishing stores a read-only snapshot, so saving changes to a published manuscript does not silently change its public edition. The first publication locks its slug. Unpublishing revokes public text and media access.
+
+Images are resized and compressed to WebP before upload, then validated by the server. Alt text is required. D1 is the durable source; IndexedDB recovery is only a temporary device-local safety net.
+
+Useful starting points:
+
+| Location                          | Responsibility                                                      |
+| --------------------------------- | ------------------------------------------------------------------- |
+| `src/content`                     | Example identity, selected work, and site defaults                  |
+| `src/routes`                      | Typed file routes and lazy boundaries                               |
+| `src/features/writing`            | Schema, Plate configuration, editor, Studio, and public renderer    |
+| `src/server`                      | Authentication, API, storage, article HTML, and discovery documents |
+| `db/schema.ts`, `drizzle/`        | Database schema and migrations                                      |
+| `src/styles`, `src/lib/motion.ts` | Typography, design tokens, and motion                               |
+
+The sample site retains a fictionalized KR identity and original interface studies. Replace those, the favicon/social artwork, and metadata when making your own site. The design and writing systems can also be studied independently without deploying anything.
+
+Architecture, motion, and research notes are in [`docs/`](docs/). The project is experimental, and test results describe the tested artifact rather than a promise of production support or fixed performance scores.
+
+## License
+
+Original code and project artwork are licensed under MIT; see [LICENSE](LICENSE). Bundled fonts retain their SIL Open Font License notices in `public/fonts`. Dependencies retain their respective licenses.

@@ -10,7 +10,6 @@
     "pnpm-lock.yaml",
     "public/**",
     "playwright-report/**",
-    "test-results/**",
-    ".sites-runtime/**"
+    "test-results/**"
   ]
 }

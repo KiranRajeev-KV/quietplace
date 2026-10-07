@@ -6,8 +6,8 @@ Writing is one domain, from a small observation to a technical essay. The public
 
 - Plate 53's high-level React/editor and static APIs, with basic nodes, feature-owned Markdown input rules, links, code, lists/indent, images/captions, and Markdown interoperability. No full demo kit, collaboration, tables, AI toolbar, or competing editor.
 - Structured Plate JSON is the editable authority. Publishing creates a read-only snapshot; editing a published piece cannot expose unfinished changes. Plain text, excerpts, reading time, Markdown, feeds, HTML, and metadata are derived.
-- Sites-managed D1 stores manuscripts, publication snapshots, revision numbers, and media metadata. R2 stores compressed raster images. Prepared queries and conditional revision updates prevent silent overwrites. Drizzle generates reviewed SQL migrations; it is not required by runtime queries.
-- Dispatch-owned ChatGPT sign-in identifies the author. Every Studio operation checks a server-side owner allowlist. Sign-in alone does not authorize another user. Same-origin mutation checks protect the session. Local sign-in uses the Sites development helper and never ships as a production bypass.
+- Cloudflare D1 stores manuscripts, publication snapshots, revision numbers, and media metadata. R2 stores compressed raster images. Prepared queries and conditional revision updates prevent silent overwrites. Drizzle generates reviewed SQL migrations; it is not required by runtime queries.
+- One server-side Studio passphrase and Hono-signed seven-day session cookies keep authoring private. Login is rate-limited; mutations have a same-origin/custom-header boundary. Local and deployed installations use the same authentication flow, with no header-based identity bypass. See the README for setup and session limitations.
 - TanStack Query manages genuine remote state. Autosave serializes writes after a pause, retains edits made during a request, exposes errors/retry, and keeps a device-local IndexedDB recovery copy. The database remains authoritative. Navigation flushes or blocks; visibility loss attempts a bounded keepalive save.
 - Public Writing routes render on the Worker using the same Plate static schema and article components used for browser reading and private preview. Known portfolio static metadata is preserved. Dynamic article metadata, JSON-LD, RSS, and sitemap read only published snapshots. Draft media requires owner authorization.
 - Samples are explicitly marked private specimens. Publishing samples is rejected by the server. They exist to test typesetting and editor behavior, not to impersonate the author.
@@ -25,7 +25,7 @@ Writing is one domain, from a small observation to a technical essay. The public
 
 ## Implementation order
 
-Shared schema and repository → protected API and storage → public archive slice → shared static typesetting → manuscript desk and Plate → autosave/recovery → preview/publishing → media and code → local/hosted security, workflow, accessibility, and visual audits.
+Shared schema and repository → protected API and storage → public archive slice → shared static typesetting → manuscript desk and Plate → autosave/recovery → preview/publishing → media and code → security, workflow, accessibility, and visual audits.
 
 ## Editorial details and practical limits
 
@@ -35,6 +35,6 @@ The contents margin appears only on a piece with at least 800 words and three se
 
 Native View Transitions carry title identity from archive to article and between the manuscript and its actual preview. The existing paper/ink timing tokens remain authoritative. Reading content stays still. No scroll library or new animation framework was added.
 
-Public article social metadata uses a cover or first publication image when available. Text-only pieces use text summaries rather than an unrelated inherited portfolio image. The platform's existing owner-only audience is preserved; public crawler access and RSS subscription from outside the account require a public platform audience. The application-level author boundary remains enforced independently.
+Public article social metadata uses a cover or first publication image when available. Text-only pieces use text summaries rather than an unrelated inherited portfolio image. A standalone Worker serves public writing and feeds without platform sign-in. The Studio and unpublished media require a valid author session.
 
 The private editor includes Plate's maintained rich-text/Markdown machinery in an author-only lazy bundle. Archive routes avoid importing it. Local Chromium measurements are lab observations, not field-vitals guarantees; verification notes record the actual inspected artifact and limitations.
